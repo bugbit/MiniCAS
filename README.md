@@ -1,2 +1,0 @@
-# MiniCAS
-Mini CAS
