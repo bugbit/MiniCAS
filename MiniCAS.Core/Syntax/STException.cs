@@ -27,23 +27,42 @@ SOFTWARE.
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MiniCAS.Core.Expr
+namespace MiniCAS.Core.Syntax
 {
-    [DebuggerDisplay("TypeExpr : {TypeExpr} {DebugView}")]
-    public class Expr
+    public class STException : Exception
     {
-        public EExprType TypeExpr { get; }
-
-        protected Expr(EExprType _type)
+        public STException(int position, int line, int column)
         {
-            TypeExpr = _type;
+            Position = position;
+            Line = line;
+            Column = column;
         }
 
-        protected string DebugView => ToString();
+        public STException(int position, int line, int column, string message) : base(message)
+        {
+            Position = position;
+            Line = line;
+            Column = column;
+        }
+
+        public STException(int position, int line, int column, string message, Exception innerException) : base(message, innerException)
+        {
+            Position = position;
+            Line = line;
+            Column = column;
+        }
+
+        protected STException(SerializationInfo info, StreamingContext context) : base(info, context)
+        {
+        }
+
+        public int Position { get; protected set; }
+        public int Line { get; protected set; }
+        public int Column { get; protected set; }
     }
 }

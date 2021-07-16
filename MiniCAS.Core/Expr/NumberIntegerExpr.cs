@@ -31,19 +31,22 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Deveel.Math;
 
 namespace MiniCAS.Core.Expr
 {
-    [DebuggerDisplay("TypeExpr : {TypeExpr} {DebugView}")]
-    public class Expr
+    [DebuggerDisplay("TypeExpr : {TypeExpr} Value : {value} {DebugView}")]
+    public class NumberIntegerExpr : NumberExpr<BigInteger>
     {
-        public EExprType TypeExpr { get; }
-
-        protected Expr(EExprType _type)
+        public NumberIntegerExpr(BigInteger n) : base(n)
         {
-            TypeExpr = _type;
+            IsZ = true;
+            IsR = false;
+            IsDecimal = false;
         }
 
-        protected string DebugView => ToString();
+        public override BigInteger ValueAsInteger => value;
+        public override BigDecimal ValueAsBDecimal => value;
+        public override decimal ValueAsDecimal => value;
     }
 }

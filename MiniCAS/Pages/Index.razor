@@ -1,20 +1,129 @@
 ﻿@page "/"
+@inject IJSRuntime JsRuntime;
+@using System.Reflection;
 
-<div id="outer-screen">
-    <div id="inner-screen">
-        <div id="output-outer">
-            <div id="output">
-                Helloword<br />
-                <div class="row">
-                    <div class="col"><Latex Value="\frac{\cancel{b}}{\cancel{b}}"></Latex></div>
+<form @onsubmit="submit">
+    <div id="outer-screen">
+        <div id="inner-screen">
+            <div id="output-outer">
+                <div id="output">
+                    <div>
+                        @name Versión @version<br />
+                        @descripcion<br />
+                        <a href="https://github.com/bugbit/MiniCAS">https://github.com/bugbit/MiniCAS</a><br />
+                        MIT LICENSE
+                    </div>
+                    <div>
+                        <Latex Value="\frac{\cancel{b}}{\cancel{b}}"></Latex>
+                    </div>
+                </div>
+            </div>
+            <div id="blank-line">
+                <div>
+                    <Latex Value=@expr_latex></Latex>
+                </div>
+                @if (showError)
+                {
+                    <div>
+                        <div class="error">@errorStr</div>
+                        @if (!string.IsNullOrWhiteSpace(linError))
+                        {
+                            <div>@((MarkupString)linError)</div>
+                        }
+                    </div>
+                }
+                <div>
+                    &nbsp;
+                </div>
+            </div>
+            <div id="input-row">
+                <div>
+                    <div id="cmds">
+                        <div class="cmds-elem">
+                            <input class="btn btn-primary" type="submit" value="calcular" disabled=@(calculating || !expr_ok ) />
+                        </div>
+                        @if (showdec)
+                        {
+                            <div class="cmds-elem">
+                                <input id="numdec" type="number" min="0" disabled=@calculating @bind-value=@numdec />
+                            </div>
+                        }
+                        <div class="cmds-elem">
+                            <input id="chkshowdec" type="checkbox" class="form-check-input" checked=@showdec @onchange=@(e=> showdec=(bool) e.Value) disabled=@calculating />
+                            <label for="chkshowdec" class="form-check-label">Mostrar números decimales</label>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <textarea @ref="ref_expr" id="input" @bind=@expr autofocus required class="form-control" rows="1" style="resize:none;" disabled=@calculating @oninput="expr_input" />
                 </div>
             </div>
         </div>
-        <div id="blank-line">&nbsp;</div>
-        <div id="input-row">
-            <span>&gt;&nbsp;</span><textarea autofocus style="resize:both;" oninput="this.style.height = 'auto'; this.style.height = (this.scrollHeight) + 'px';" />
-        </div>
     </div>
-</div>
+</form>
 
+@code
+{
+    private ElementReference ref_expr;
+    private string name;
+    private string version;
+    private string descripcion;
+    private bool showdec = false;
+    private int numdec = 3;
+    private string expr;
+    private string expr_latex;
+    private bool expr_ok;
+    private bool calculating;
+    private bool showError;
+    private string errorStr;
+    private string linError;
 
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+
+        var pAssembly = typeof(Index).Assembly;
+        var pAttrs = pAssembly.GetCustomAttributes(false);
+
+        name = pAttrs.OfType<AssemblyTitleAttribute>
+    ().First().Title;
+        version = pAssembly.GetName().Version.ToString();
+        descripcion = pAttrs.OfType<AssemblyDescriptionAttribute>
+            ().First().Description;
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
+
+        if (!firstRender)
+            return;
+
+        await JsRuntime.InvokeVoidAsync("minicas.setautoexpand", ref_expr);
+    }
+
+    private async Task expr_input(ChangeEventArgs e)
+    {
+        //        await JsRuntime.InvokeVoidAsync("eval", @"(function() {
+        //input.style.height='auto';
+        //input.style.height=(input.scrollHeight)+'px';
+        //})()");
+        expr_latex = Convert.ToString(e.Value);
+        expr_ok = !string.IsNullOrWhiteSpace(expr_latex);
+    }
+
+    private async Task submit()
+    {
+        calculating = true;
+        //await Task.Delay(4000);
+        calculating = false;
+        if (expr.Length >= 3)
+        {
+            showError = true;
+            errorStr = "sintaxis error en la línea 1 columna 3";
+            linError = $"{expr.Substring(0,2)}<mark>{expr[2]}</mark>{expr.Substring(3)}";
+            await ref_expr.FocusAsync();
+            await JsRuntime.InvokeVoidAsync("minicas.setSelectionRange", ref_expr, 2, 3);
+        }
+    }
+}

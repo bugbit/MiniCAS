@@ -27,23 +27,14 @@ SOFTWARE.
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace MiniCAS.Core.Expr
 {
-    [DebuggerDisplay("TypeExpr : {TypeExpr} {DebugView}")]
-    public class Expr
+    public enum EExprType
     {
-        public EExprType TypeExpr { get; }
-
-        protected Expr(EExprType _type)
-        {
-            TypeExpr = _type;
-        }
-
-        protected string DebugView => ToString();
+        Number
     }
 }

@@ -8,6 +8,17 @@
 
 window.minicas =
 {
+    setautoexpand: function (textarea) {
+        textarea.addEventListener('input', autosize);
+
+        function autosize() {
+            textarea.style.height = 'auto';
+            textarea.style.height = (input.scrollHeight) + 'px';
+        }
+    },
+    setSelectionRange: function (textarea, start, end) {
+        textarea.setSelectionRange(start, end);
+    },
     processLatex: async function (input, isDisplay) {
         return MathJax.tex2chtmlPromise(input, { display: isDisplay }).then(function (node) {
             //

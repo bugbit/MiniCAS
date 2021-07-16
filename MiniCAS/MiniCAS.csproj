@@ -3,6 +3,11 @@
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
     <ServiceWorkerAssetsManifest>service-worker-assets.js</ServiceWorkerAssetsManifest>
+    <Description>MiniCAS Edition Nieblita</Description>
+    <Authors>Óscar Hernández Bañó</Authors>
+    <PackageProjectUrl>https://github.com/bugbit/minicas</PackageProjectUrl>
+    <Product>MiniCAS Edition Nieblita</Product>
+    <Copyright>Copyright © 2018 Óscar Hernández Bañó</Copyright>
   </PropertyGroup>
 
   <ItemGroup>

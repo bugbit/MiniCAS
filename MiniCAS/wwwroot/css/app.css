@@ -71,8 +71,12 @@ a, .btn-link {
     flex-direction: column-reverse
 }
 
-#output .error {
+#output .error, #blank-line .error {
     color: red;
+}
+
+#output mark, #blank-line mark {
+    background-color: red;
 }
 
 #output .info {
@@ -80,18 +84,30 @@ a, .btn-link {
 }
 
 #input {
-    color: #f8f8f8;
+    color: black;
     font: inherit;
-    border: none;
-    outline: none;
     caret-color: inherit;
-    width: 90%;
+    width: 100%;
 }
 
     #input::-ms-clear {
         /* Hide the X clear button microsoft puts in input fields. */
         display: none;
     }
+
+#cmds {
+    width: 100%;
+}
+
+.cmds-elem {
+    padding-left: 4px;
+    padding-right: 4px;
+    float: right;
+}
+
+#numdec {
+    width: 5em;
+}
 
 @media screen and (max-width: 649px) {
     #outer-screen {
@@ -112,7 +128,7 @@ a, .btn-link {
 /* In this case, breakpoint = (900 + 2 * 36) * (100 / (100 - 2 * 2)) = 1012.5px */
 @media screen and (min-width: 1013px) {
     #outer-screen {
-        width: 900px;
+        width: 100%;
         padding: 36px;
         border-radius: 8px;
     }

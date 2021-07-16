@@ -11,11 +11,12 @@
 using System;
 using System.Reflection;
 
-[assembly: System.Reflection.AssemblyCompanyAttribute("MiniCAS.Core")]
+[assembly: System.Reflection.AssemblyCompanyAttribute("Óscar Hernández Bañó")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
+[assembly: System.Reflection.AssemblyCopyrightAttribute("Copyright © 2018 Óscar Hernández Bañó")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
 [assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
-[assembly: System.Reflection.AssemblyProductAttribute("MiniCAS.Core")]
+[assembly: System.Reflection.AssemblyProductAttribute("MiniCAS Edition Nieblita")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MiniCAS.Core")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
 
