@@ -78,6 +78,8 @@ namespace MiniCAS.Core.Syntax
             return true;
         }
 
+        public Token ToToken() => new(Position, Line, Column, Token, TokenStr);
+
         private void ReadToken()
         {
             foreach (var regtoken in regTokens)

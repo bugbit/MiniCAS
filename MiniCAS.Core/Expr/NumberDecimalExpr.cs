@@ -37,19 +37,19 @@ using static MiniCAS.Core.Math.MathEx;
 
 namespace MiniCAS.Core.Expr
 {
-    [DebuggerDisplay("TypeExpr : {TypeExpr} {DebugView}")]
-    public class Expr
+    [DebuggerDisplay("TypeExpr : {TypeExpr} Value : {value} {DebugView}")]
+    public class NumberDecimalExpr : NumberExpr<decimal>
     {
-        public EExprType TypeExpr { get; }
-
-        protected Expr(EExprType _type)
+        public NumberDecimalExpr(BigDecimal n) : base(n)
         {
-            TypeExpr = _type;
+            var isinteger = IsInteger(n);
+
+            IsZ = isinteger;
+            IsR = IsDecimal = !isinteger;
         }
 
-        protected string DebugView => ToString();
-
-        public static NumberIntegerExpr MakeNumber(BigInteger n) => new(n);
-        public static NumberExpr MakeNumber(BigDecimal n) => (IsInteger(n)) ? new NumberIntegerExpr(n) : new NumberRealExpr(n);
+        public override BigInteger ValueAsInteger => ToBigDecimal(value);
+        public override BigDecimal ValueAsBDecimal => ToBigDecimal(value);
+        public override decimal ValueAsDecimal => value;
     }
 }

@@ -27,29 +27,11 @@ SOFTWARE.
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Deveel.Math;
 
-using static MiniCAS.Core.Math.MathEx;
-
-namespace MiniCAS.Core.Expr
+namespace MiniCAS.Core.Syntax
 {
-    [DebuggerDisplay("TypeExpr : {TypeExpr} {DebugView}")]
-    public class Expr
-    {
-        public EExprType TypeExpr { get; }
-
-        protected Expr(EExprType _type)
-        {
-            TypeExpr = _type;
-        }
-
-        protected string DebugView => ToString();
-
-        public static NumberIntegerExpr MakeNumber(BigInteger n) => new(n);
-        public static NumberExpr MakeNumber(BigDecimal n) => (IsInteger(n)) ? new NumberIntegerExpr(n) : new NumberRealExpr(n);
-    }
+    public record Token(int Position, int Line, int Column, ETokenType TokenType, string TokenStr);
 }

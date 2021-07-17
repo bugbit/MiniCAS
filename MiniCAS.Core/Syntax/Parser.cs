@@ -27,29 +27,39 @@ SOFTWARE.
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Deveel.Math;
 
-using static MiniCAS.Core.Math.MathEx;
-
-namespace MiniCAS.Core.Expr
+namespace MiniCAS.Core.Syntax
 {
-    [DebuggerDisplay("TypeExpr : {TypeExpr} {DebugView}")]
-    public class Expr
+    public class Parser
     {
-        public EExprType TypeExpr { get; }
+        private Stack<(Token Operation, List<(Token Token, Expr.Expr Expr)> Exprs)> stack;
+        private Tokenizer tokenizer;
 
-        protected Expr(EExprType _type)
+        public void Parse(string expr)
         {
-            TypeExpr = _type;
+            stack = new();
+            tokenizer = new(expr);
+            while (!tokenizer.EOF)
+            {
+                tokenizer.NextToken();
+                ProcessToken();
+            }
         }
 
-        protected string DebugView => ToString();
+        private void ProcessToken()
+        {
+            var token = tokenizer.ToToken();
+            Expr.Expr expr = null;
 
-        public static NumberIntegerExpr MakeNumber(BigInteger n) => new(n);
-        public static NumberExpr MakeNumber(BigDecimal n) => (IsInteger(n)) ? new NumberIntegerExpr(n) : new NumberRealExpr(n);
+            //if (token.TokenType==ETokenType.Number)
+            //    expr=Expr.Expr.NewNumber()
+            if (stack.Count == 0)
+            {
+                stack.Push(new(token, new(new[] { () })));
+            }
+        }
     }
 }
