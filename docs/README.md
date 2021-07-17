@@ -1,4 +1,4 @@
-    urls:
+<ul><li>urls<br>
         https://es.wikipedia.org/wiki/Propiedades_de_los_n%C3%BAmeros_enteros<br>
         http://cimanet.uoc.edu/cursMates0/IniciacionMatematicas/inici/0_0.html<br>
         https://www.monografias.com/trabajos106/expresiones-algebraicas/expresiones-algebraicas.shtml<br>
@@ -13,10 +13,17 @@
         http://www.minimath.net/simplificar-expresiones.htm<br>
         https://matrixcalc.org/es/slu.html<br>
         https://www.idomaths.com/sigfig.php<br>
-prime factorization<br>
+    </li>
+    <li><ul>
+        <li>prime factorization<br>
 Simplificar<br>
-http://www.montereyinstitute.org/courses/Algebra1/COURSE_TEXT_RESOURCE/U11_L1_T1_text_final_es.html<br>
-latex<br>
+http://www.montereyinstitute.org/courses/Algebra1/COURSE_TEXT_RESOURCE/U11_L1_T1_text_final_es.html<br>            
+        </li>
+    </ul></li>
+    <li><ul>latex<br>
     https://math.meta.stackexchange.com/questions/5020/mathjax-basic-tutorial-and-quick-reference<br>
     http://mathlex.org/doc/language<br>
     http://www.mat.uda.cl/hsalinas/cursos/2008/latex/apuntes5.pdf<br>
+        </li>
+    </ul></li>
+</li></ul>        
