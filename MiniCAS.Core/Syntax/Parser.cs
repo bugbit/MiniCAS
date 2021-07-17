@@ -58,7 +58,7 @@ namespace MiniCAS.Core.Syntax
             //    expr=Expr.Expr.NewNumber()
             if (stack.Count == 0)
             {
-                stack.Push(new(token, new(new[] { () })));
+                //stack.Push(new(token, new(new[] { () })));
             }
         }
     }
