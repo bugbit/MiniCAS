@@ -30,6 +30,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace MiniCAS.Core.Syntax
@@ -40,7 +41,7 @@ namespace MiniCAS.Core.Syntax
             {
                 (new Regex(@"^[ \f\t\v]+",RegexOptions.Compiled),ETokenType.Spaces),
                 (new Regex(@"^[\r\n]+",RegexOptions.Compiled),ETokenType.NewLine),
-                (new Regex(@"(?<token>^(\d*\.)?\d+$)",RegexOptions.Compiled),ETokenType.Number)
+                (new Regex(@"(?<token>^(\d*\.)?\d+)",RegexOptions.Compiled),ETokenType.Number)
             };
 
         private string text;
@@ -57,13 +58,14 @@ namespace MiniCAS.Core.Syntax
             text = _text;
         }
 
-        public bool NextToken()
+        public async Task<bool> NextToken(CancellationToken token)
         {
             if (EOF)
                 return false;
 
             do
             {
+                token.ThrowIfCancellationRequested();
                 if (text.Length == 0)
                 {
                     EOF = true;
@@ -71,7 +73,7 @@ namespace MiniCAS.Core.Syntax
                     return false;
                 }
 
-                ReadToken();
+                await ReadTokenAsync(token);
 
             } while (Token == ETokenType.Spaces || Token == ETokenType.NewLine);
 
@@ -80,40 +82,41 @@ namespace MiniCAS.Core.Syntax
 
         public Token ToToken() => new(Position, Line, Column, Token, TokenStr);
 
-        private void ReadToken()
+        private Task ReadTokenAsync(CancellationToken token) => Task.Run(() => ReadToken(token), token);
+
+        private void ReadToken(CancellationToken token)
         {
-            foreach (var regtoken in regTokens)
+            var q =
+            (
+                from r in regTokens.AsParallel().WithCancellation(token)
+                let m = r.regex.Match(text)
+                where m.Success
+                select new { r.type, m }
+            ).FirstOrDefault();
+
+            if (q == null)
+                throw new STException(Position, Line, Column, string.Format(Properties.Resources.NoRecognizeStError, text[0]));
+
+            var match = q.m;
+            var len = match.Length;
+            var gtoken = match.Groups["token"];
+
+            Position += len;
+            Token = q.type;
+            TokenStr = (gtoken.Success) ? gtoken.Value : "";
+
+            switch (Token)
             {
-                var match = regtoken.regex.Match(text);
-
-                if (match.Success)
-                {
-                    var len = match.Length;
-                    var gtoken = match.Groups["token"];
-
-                    //while (len > 0 && "\r\n".Contains(text[len - 1])) len--;
-                    Position += len;
-                    Token = regtoken.type;
-                    TokenStr = (gtoken.Success) ? gtoken.Value : "";
-
-                    switch (Token)
-                    {
-                        case ETokenType.NewLine:
-                            Column = 1;
-                            Line++;
-                            break;
-                        default:
-                            Column += len;
-                            break;
-                    }
-
-                    text = text.Substring(len);
-
-                    return;
-                }
+                case ETokenType.NewLine:
+                    Column = 1;
+                    Line++;
+                    break;
+                default:
+                    Column += len;
+                    break;
             }
 
-            throw new STException(Position, Line, Column, string.Format(Properties.Resources.NoRecognizeStError, text[Position]));
+            text = text.Substring(len);
         }
     }
 }

@@ -31,7 +31,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Deveel.Math;
+using System.Numerics;
 
 namespace MiniCAS.Core.Expr
 {
@@ -48,13 +48,11 @@ namespace MiniCAS.Core.Expr
         protected NumberExpr() : base(EExprType.Number) { }
     }
 
-    [DebuggerDisplay("TypeExpr : {TypeExpr} Value : {value} {DebugView}")]
-    public class NumberExpr<T> : NumberExpr
+    [DebuggerDisplay("TypeExpr : {TypeExpr} Value : {Value} {DebugView}")]
+    public partial class NumberExpr<T> : NumberExpr
     {
-        protected T value { get; }
+        protected T Value { get; }
 
-        protected NumberExpr(T v) { value = v; }
-
-        public override string ToString() => Convert.ToString(value);
+        protected NumberExpr(T v) { Value = v; }
     }
 }

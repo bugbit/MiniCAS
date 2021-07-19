@@ -31,14 +31,14 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Deveel.Math;
+using System.Numerics;
 
 using static MiniCAS.Core.Math.MathEx;
 
 namespace MiniCAS.Core.Expr
 {
     [DebuggerDisplay("TypeExpr : {TypeExpr} {DebugView}")]
-    public class Expr
+    public partial class Expr
     {
         public EExprType TypeExpr { get; }
 
@@ -49,7 +49,10 @@ namespace MiniCAS.Core.Expr
 
         protected string DebugView => ToString();
 
+        
+
         public static NumberIntegerExpr MakeNumber(BigInteger n) => new(n);
-        public static NumberExpr MakeNumber(BigDecimal n) => (IsInteger(n)) ? new NumberIntegerExpr(n) : new NumberRealExpr(n);
+        public static NumberExpr MakeNumber(BigDecimal n) => (IsInteger(n)) ? new NumberIntegerExpr((BigInteger)n) : new NumberRealExpr(n);
+        public static NumberExpr MakeNumber(decimal n) => (IsInteger(n)) ? new NumberIntegerExpr((BigInteger)n) : new NumberDecimalExpr(n);
     }
 }

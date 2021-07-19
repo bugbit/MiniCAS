@@ -28,8 +28,13 @@ SOFTWARE.
 using System;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
 using System.Threading.Tasks;
+using System.Numerics;
+using MiniCAS.Core.Expr;
+
 using static System.Console;
+using static MiniCAS.Core.Math.MathEx;
 
 namespace MiniCAS.Tests
 {
@@ -56,8 +61,8 @@ namespace MiniCAS.Tests
             }
         }
 
-        [Test]
-        static void TokernizerTest()
+        //[Test]
+        static async Task TokernizerTest()
         {
             var texts = new[]
             {
@@ -66,7 +71,7 @@ namespace MiniCAS.Tests
 
             foreach (var t in texts)
             {
-                var token = new MiniCAS.Core.Syntax.Tokenizer(t);
+                var token = new Core.Syntax.Tokenizer(t);
 
                 Write($"{t}: ");
 
@@ -74,16 +79,95 @@ namespace MiniCAS.Tests
                 {
                     do
                     {
-                        if (token.NextToken())
+                        if (await token.NextToken(CancellationToken.None))
                             Write($"{token.Token} {token.TokenStr} ");
                     } while (!token.EOF);
                     WriteLine(".");
                 }
-                catch (MiniCAS.Core.Syntax.STException ex)
+                catch (Core.Syntax.STException ex)
                 {
                     PrintError($"{ex.Message} en line {ex.Line} col {ex.Column} pos {ex.Position}");
                     PrintError(new string(' ', ex.Column - 1) + '^');
                     PrintError(t.Split('\n')[ex.Line - 1]);
+                }
+                catch (Exception ex)
+                {
+                    PrintError(ex.Message);
+                }
+            }
+        }
+
+        //[Test]
+        static void NumberExprTest()
+        {
+            var nums = new NumberExpr[]
+            {
+                Expr.MakeNumber((BigInteger)1),Expr.MakeNumber(3.1415927),Expr.MakeNumber(1.234567890123456789m)
+            };
+
+            foreach (var n in nums)
+            {
+                WriteLine($"{n} = (Integer) {NumberToString(n.ValueAsInteger)}");
+                WriteLine($"{n} = (BigDecimal) {NumberToString(n.ValueAsBDecimal)}");
+                WriteLine($"{n} = (decimal) {NumberToString(n.ValueAsDecimal)}");
+            }
+        }
+
+        //[Test]
+        static void BigDecimalParseTest()
+        {
+            var texts = new[]
+            {
+                "20","2.30","-30","+30.23",".986","20,33"
+            };
+
+            foreach (var t in texts)
+            {
+                Write($"{t}: ");
+
+                try
+                {
+                    var n = BigDecimal.Parse(t);
+
+                    WriteLine(NumberToString(n));
+                }
+                catch (Exception ex)
+                {
+                    PrintError(ex.Message);
+                }
+            }
+        }
+
+        [Test]
+        static async Task ParserTest()
+        {
+            var texts = new[]
+            {
+                "20","2.30","-30","aa","2x"
+            };
+
+            foreach (var t in texts)
+            {
+                var token = new Core.Syntax.Parser();
+
+                Write($"{t}: ");
+
+                try
+                {
+
+                    var expr = await token.Parse(t, CancellationToken.None);
+
+                    WriteLine(expr);
+                }
+                catch (Core.Syntax.STException ex)
+                {
+                    PrintError($"{ex.Message} en line {ex.Line} col {ex.Column} pos {ex.Position}");
+                    PrintError(new string(' ', ex.Column - 1) + '^');
+                    PrintError(t.Split('\n')[ex.Line - 1]);
+                }
+                catch (Exception ex)
+                {
+                    PrintError(ex.Message);
                 }
             }
         }

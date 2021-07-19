@@ -29,27 +29,28 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
-using Deveel.Math;
 
 using static MiniCAS.Core.Math.MathEx;
 
 namespace MiniCAS.Core.Expr
 {
-    [DebuggerDisplay("TypeExpr : {TypeExpr} Value : {value} {DebugView}")]
-    public class NumberDecimalExpr : NumberExpr<decimal>
+    [DebuggerDisplay("TypeExpr : {TypeExpr} Value : {Value} {DebugView}")]
+    public partial class NumberDecimalExpr : NumberExpr<decimal>
     {
-        public NumberDecimalExpr(BigDecimal n) : base(n)
+        public NumberDecimalExpr(decimal n) : base(n)
         {
             var isinteger = IsInteger(n);
 
             IsZ = isinteger;
-            IsR = IsDecimal = !isinteger;
+            IsR = false;
+            IsDecimal = !isinteger;
         }
 
-        public override BigInteger ValueAsInteger => ToBigDecimal(value);
-        public override BigDecimal ValueAsBDecimal => ToBigDecimal(value);
-        public override decimal ValueAsDecimal => value;
+        public override BigInteger ValueAsInteger => (BigInteger)Value;
+        public override BigDecimal ValueAsBDecimal => Value;
+        public override decimal ValueAsDecimal => Value;
     }
 }

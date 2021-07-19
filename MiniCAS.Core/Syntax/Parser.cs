@@ -28,7 +28,9 @@ SOFTWARE.
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace MiniCAS.Core.Syntax
@@ -38,28 +40,75 @@ namespace MiniCAS.Core.Syntax
         private Stack<(Token Operation, List<(Token Token, Expr.Expr Expr)> Exprs)> stack;
         private Tokenizer tokenizer;
 
-        public void Parse(string expr)
+        public async Task<Expr.Expr> Parse(string expr, CancellationToken token)
         {
             stack = new();
             tokenizer = new(expr);
             while (!tokenizer.EOF)
             {
-                tokenizer.NextToken();
+                token.ThrowIfCancellationRequested();
+
+                await tokenizer.NextToken(token);
                 ProcessToken();
             }
+
+            return ProcessAll(token);
         }
 
         private void ProcessToken()
         {
+            if (tokenizer.EOF)
+                return;
+
             var token = tokenizer.ToToken();
             Expr.Expr expr = null;
 
-            //if (token.TokenType==ETokenType.Number)
-            //    expr=Expr.Expr.NewNumber()
-            if (stack.Count == 0)
+            if (token.TokenType == ETokenType.Number)
             {
-                //stack.Push(new(token, new(new[] { () })));
+                var n = BigDecimal.Parse(token.TokenStr);
+
+                expr = Expr.Expr.MakeNumber(n);
             }
+            else
+                throw new STException(token.Position, token.Line, token.Column, string.Format(Properties.Resources.NoRecognizeStError, token.TokenStr));
+
+            if (stack.Count == 0)
+                stack.Push(new(token, new(new[] { (token, expr) })));
+            else
+                throw new STException(token.Position, token.Line, token.Column, string.Format(Properties.Resources.NoExpectTokenException, token.TokenStr));
+        }
+
+        private Expr.Expr PopAndProcess()
+        {
+            if (stack.Count == 0)
+                return null;
+
+            var expr = stack.Pop().Exprs[0].Expr;
+
+            ProcessExprPeek(expr);
+
+            return expr;
+        }
+
+        private void ProcessExprPeek(Expr.Expr expr)
+        {
+            if (stack.Count == 0)
+                return;
+
+            throw new NotImplementedException();
+        }
+
+        private Expr.Expr ProcessAll(CancellationToken token)
+        {
+            Expr.Expr expr = null;
+
+            while (stack.Count > 0)
+            {
+                token.ThrowIfCancellationRequested();
+                expr = PopAndProcess();
+            }
+
+            return expr;
         }
     }
 }
