@@ -35,8 +35,8 @@ using System.Numerics;
 
 namespace MiniCAS.Core.Expr
 {
-    [DebuggerDisplay("TypeExpr : {TypeExpr} {DebugView}")]
-    public class NumberExpr : Expr
+    [DebuggerDisplay("TypeExpr : {TypeExpr} AlgExprType : {AlgExprType} IsZ : {IsZ} IsR : {IsR} IsDecimal : {IsDecimal} {DebugView}")]
+    public class NumberExpr : AlgExpr
     {
         public bool IsZ { get; protected set; }
         public bool IsR { get; protected set; }
@@ -45,10 +45,10 @@ namespace MiniCAS.Core.Expr
         public virtual BigDecimal ValueAsBDecimal => 0;
         public virtual decimal ValueAsDecimal => 0;
 
-        protected NumberExpr() : base(EExprType.Number) { }
+        protected NumberExpr() : base(EAlgExprType.Number) { }
     }
 
-    [DebuggerDisplay("TypeExpr : {TypeExpr} Value : {Value} {DebugView}")]
+    [DebuggerDisplay("TypeExpr : {TypeExpr} AlgExprType : {AlgExprType} IsZ : {IsZ} IsR : {IsR} IsDecimal : {IsDecimal} Value : {Value} {DebugView}")]
     public partial class NumberExpr<T> : NumberExpr
     {
         protected T Value { get; }

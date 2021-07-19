@@ -49,8 +49,6 @@ namespace MiniCAS.Core.Expr
 
         protected string DebugView => ToString();
 
-        
-
         public static NumberIntegerExpr MakeNumber(BigInteger n) => new(n);
         public static NumberExpr MakeNumber(BigDecimal n) => (IsInteger(n)) ? new NumberIntegerExpr((BigInteger)n) : new NumberRealExpr(n);
         public static NumberExpr MakeNumber(decimal n) => (IsInteger(n)) ? new NumberIntegerExpr((BigInteger)n) : new NumberDecimalExpr(n);

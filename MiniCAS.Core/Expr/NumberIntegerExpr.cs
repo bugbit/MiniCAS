@@ -38,7 +38,7 @@ using static MiniCAS.Core.Math.MathEx;
 
 namespace MiniCAS.Core.Expr
 {
-    [DebuggerDisplay("TypeExpr : {TypeExpr} Value : {Value} {DebugView}")]
+    [DebuggerDisplay("TypeExpr : {TypeExpr} AlgExprType : {AlgExprType} IsZ : {IsZ} IsR : {IsR} IsDecimal : {IsDecimal} Value : {Value} {DebugView}")]
     public partial class NumberIntegerExpr : NumberExpr<BigInteger>
     {
         public NumberIntegerExpr(BigInteger n) : base(n)

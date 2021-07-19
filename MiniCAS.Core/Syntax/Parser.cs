@@ -32,6 +32,7 @@ using System.Numerics;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using MiniCAS.Core.Output;
 
 namespace MiniCAS.Core.Syntax
 {
@@ -40,7 +41,27 @@ namespace MiniCAS.Core.Syntax
         private Stack<(Token Operation, List<(Token Token, Expr.Expr Expr)> Exprs)> stack;
         private Tokenizer tokenizer;
 
-        public async Task<Expr.Expr> Parse(string expr, CancellationToken token)
+        public Task<Expr.Expr> Parse(string expr, CancellationToken token) => Parse(expr, false, token);
+
+        public async Task<LaTex> ParseToLatex(string expr, CancellationToken token)
+        {
+            try
+            {
+                var e = await Parse(expr, true, token);
+
+                token.ThrowIfCancellationRequested();
+
+                var latex = e.ToLatex();
+
+                return latex;
+            }
+            catch
+            {
+                return new LaTex();
+            }
+        }
+
+        private async Task<Expr.Expr> Parse(string expr, bool argNoThrowEx, CancellationToken token)
         {
             stack = new();
             tokenizer = new(expr);
@@ -49,16 +70,17 @@ namespace MiniCAS.Core.Syntax
                 token.ThrowIfCancellationRequested();
 
                 await tokenizer.NextToken(token);
-                ProcessToken();
+                if (!ProcessToken(argNoThrowEx))
+                    break;
             }
 
             return ProcessAll(token);
         }
 
-        private void ProcessToken()
+        private bool ProcessToken(bool argNoThrowEx)
         {
             if (tokenizer.EOF)
-                return;
+                return false;
 
             var token = tokenizer.ToToken();
             Expr.Expr expr = null;
@@ -70,12 +92,24 @@ namespace MiniCAS.Core.Syntax
                 expr = Expr.Expr.MakeNumber(n);
             }
             else
-                throw new STException(token.Position, token.Line, token.Column, string.Format(Properties.Resources.NoRecognizeStError, token.TokenStr));
+            {
+                if (argNoThrowEx)
+                    expr = new Expr.TokenExpr(token);
+                else
+                    throw new STException(token.Position, token.Line, token.Column, string.Format(Properties.Resources.NoRecognizeStError, token.TokenStr));
+            }
 
             if (stack.Count == 0)
                 stack.Push(new(token, new(new[] { (token, expr) })));
             else
-                throw new STException(token.Position, token.Line, token.Column, string.Format(Properties.Resources.NoExpectTokenException, token.TokenStr));
+            {
+                if (argNoThrowEx)
+                    expr = new Expr.TokenExpr(token);
+                else
+                    throw new STException(token.Position, token.Line, token.Column, string.Format(Properties.Resources.NoExpectTokenException, token.TokenStr));
+            }
+
+            return expr.TypeExpr != Expr.EExprType.Token;
         }
 
         private Expr.Expr PopAndProcess()

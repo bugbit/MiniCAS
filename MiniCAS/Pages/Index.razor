@@ -65,6 +65,7 @@
 @code
 {
     private ElementReference ref_expr;
+    private DotNetObjectReference<Index> objref_input_timer;
     private string name;
     private string version;
     private string descripcion;
@@ -108,8 +109,21 @@
         //input.style.height='auto';
         //input.style.height=(input.scrollHeight)+'px';
         //})()");
-        expr_latex = Convert.ToString(e.Value);
+        //expr_latex = Convert.ToString(e.Value);
         expr_ok = !string.IsNullOrWhiteSpace(expr_latex);
+        objref_input_timer = DotNetObjectReference.Create(this);
+
+        var id = await JsRuntime.InvokeAsync<int>("minicas.setExprInputTimer", objref_input_timer, 100);
+    }
+
+    [JSInvokable]
+    public async Task expr_input_timer()
+    {
+        //await JsRuntime.InvokeVoidAsync("alert", "timer");
+        var latex = await new MiniCAS.Core.Syntax.Parser().ParseToLatex(expr, System.Threading.CancellationToken.None);
+
+        expr_latex = latex.ToString();
+        StateHasChanged();
     }
 
     private async Task submit()
@@ -121,7 +135,7 @@
         {
             showError = true;
             errorStr = "sintaxis error en la línea 1 columna 3";
-            linError = $"{expr.Substring(0,2)}<mark>{expr[2]}</mark>{expr.Substring(3)}";
+            linError = $"{expr.Substring(0, 2)}<mark>{expr[2]}</mark>{expr.Substring(3)}";
             await ref_expr.FocusAsync();
             await JsRuntime.InvokeVoidAsync("minicas.setSelectionRange", ref_expr, 2, 3);
         }

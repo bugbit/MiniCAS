@@ -29,28 +29,19 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
-using static MiniCAS.Core.Math.MathEx;
-
 namespace MiniCAS.Core.Expr
 {
-    [DebuggerDisplay("TypeExpr : {TypeExpr} AlgExprType : {AlgExprType} IsZ : {IsZ} IsR : {IsR} IsDecimal : {IsDecimal} Value : {Value} {DebugView}")]
-    public partial class NumberDecimalExpr : NumberExpr<decimal>
+    [DebuggerDisplay("TypeExpr : {TypeExpr} AlgExprType : {AlgExprType} {DebugView}")]
+    public class AlgExpr : Expr
     {
-        public NumberDecimalExpr(decimal n) : base(n)
+        public EAlgExprType AlgExprType { get; }
+
+        protected AlgExpr(EAlgExprType _algtype) : base(EExprType.AlgExpr)
         {
-            var isinteger = IsInteger(n);
-
-            IsZ = isinteger;
-            IsR = false;
-            IsDecimal = !isinteger;
+            AlgExprType = _algtype;
         }
-
-        public override BigInteger ValueAsInteger => (BigInteger)Value;
-        public override BigDecimal ValueAsBDecimal => Value;
-        public override decimal ValueAsDecimal => Value;
     }
 }
