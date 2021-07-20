@@ -26,4 +26,17 @@ http://www.montereyinstitute.org/courses/Algebra1/COURSE_TEXT_RESOURCE/U11_L1_T1
     http://www.mat.uda.cl/hsalinas/cursos/2008/latex/apuntes5.pdf<br>
         </li>
     </ul></li>
+    <li><ul>BigDecimal<br>
+    https://github.com/AdamWhiteHat/BigDecimal/blob/master/BigDecimal/BigDecimal.cs<br>
+    https://csharp.hotexamples.com/es/examples/Ioke.Math/BigDecimal/signum/php-bigdecimal-signum-method-examples.html<br>
+    https://github.com/vic/ioke/blob/master/src/ikc/main/Ioke.Math/BigDecimal.cs
+        </li>
+    </ul></li>
+    <li><ul>Primes<br>
+    https://github.com/IOL0ol1/PrimalityTest/blob/master/PrimalityTest/Utils/BigIntegerEx.cs<br>
+    https://github.com/arupmondal-cs/BigInteger-Random-Number-Generator-and-Prime-Test/blob/master/BigIntRandomGen.cs<br>
+    http://csharphelper.com/blog/2017/08/determine-whether-a-number-is-prime-in-c/<br>
+    https://github.com/vic/ioke/blob/master/src/ikc/main/Ioke.Math/Primality.cs
+        </li>
+    </ul></li>
 </li></ul>        

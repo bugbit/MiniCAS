@@ -138,7 +138,7 @@ namespace MiniCAS.Tests
             }
         }
 
-        [Test]
+        //[Test]
         static async Task ParserTest()
         {
             var texts = new[]
@@ -162,6 +162,33 @@ namespace MiniCAS.Tests
                     PrintError($"{ex.Message} en line {ex.Line} col {ex.Column} pos {ex.Position}");
                     PrintError(new string(' ', ex.Column - 1) + '^');
                     PrintError(t.Split('\n')[ex.Line - 1]);
+                }
+                catch (Exception ex)
+                {
+                    PrintError(ex.Message);
+                }
+            }
+        }
+
+        [Test]
+        static void BigDecimalRoundTest()
+        {
+            var numbers = new (BigDecimal n, int numdec)[]
+            {
+                (3.1415927,5),
+                (3.1415927,10),
+                (3.1415927,4),
+            };
+
+            foreach (var n in numbers)
+            {
+                Write($"{n}: ");
+
+                try
+                {
+                    var r = n.n.Round(n.numdec);
+
+                    WriteLine(NumberToString(r));
                 }
                 catch (Exception ex)
                 {

@@ -43,5 +43,8 @@ namespace MiniCAS.Core.Math
 
         public static bool IsInteger(BigDecimal n) => n.Scale <= 0;
         public static bool IsInteger(decimal n) => n % 1 == 0;
+
+        public static BigDecimal Round(BigDecimal n, int numdec) => n.Round(numdec);
+        public static decimal Round(decimal n, int numdec) => decimal.Round(n, numdec);
     }
 }

@@ -201,6 +201,38 @@ namespace System.Numerics
             }
         }
 
+        public BigDecimal Round(int numdec)
+        {
+            if (numdec < 0)
+                throw new ArgumentException("numdec negative");
+
+            if (_scale == numdec)
+                return this;
+
+            var unscaledValue = _unscaledValue;
+
+            if (_scale < numdec)  // n*(numdec-Scale)^10
+                unscaledValue *= BigInteger.Pow(10, numdec - _scale);
+            else
+            {
+                /*
+                 * Round(3.1415927,4)
+                 * 31415927 / 10^(7-4)=31415
+                 * 31415927 mod 10^(7-4)=927
+                 * 500>=927 => 31415+1=31416
+                 * 3.1416
+                 */
+                var n10 = BigInteger.Pow(10, _scale - numdec);
+                var n10_2 = n10 / 2;
+
+                unscaledValue = BigInteger.DivRem(unscaledValue, n10, out BigInteger rem);
+                if (rem >= n10_2)
+                    unscaledValue++;
+            }
+
+            return new BigDecimal(unscaledValue, numdec);
+        }
+
         #region Operators
 
         public static bool operator ==(BigDecimal left, BigDecimal right)

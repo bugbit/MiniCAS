@@ -35,7 +35,7 @@ namespace MiniCAS.Core.Expr
 {
     public enum EExprType
     {
-        AlgExpr, Token, Null
+        AlgExpr, Token, Null, Result
     }
 
     public enum EAlgExprType

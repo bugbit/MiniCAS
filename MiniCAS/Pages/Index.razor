@@ -177,9 +177,7 @@
         try
         {
             _in = await Parser.Parse(expr, t.Token);
-            _out = await _in.Eval();
-            if (showdec && numdec > 0)
-                _out = await _out.Approx(numdec);
+            _out = await _in.EvalAndApprox((showdec) ? numdec : null);
             //await Task.Delay(4000, t.Token);
         }
         catch (OperationCanceledException)
