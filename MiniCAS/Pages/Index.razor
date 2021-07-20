@@ -1,7 +1,9 @@
 ﻿@page "/"
 @inject IJSRuntime JsRuntime;
 @using System.Reflection;
-
+@using System.Threading;
+@using MiniCAS.Core.Syntax;
+@using MiniCAS.Core.Expr;
 <form @onsubmit="submit">
     <div id="outer-screen">
         <div id="inner-screen">
@@ -15,6 +17,14 @@
                     </div>
                     <div>
                         <Latex Value="\frac{\cancel{b}}{\cancel{b}}"></Latex>
+                    </div>
+                    <div>
+                        <ol>
+                            @foreach (var r in results)
+                            {
+                                <li><Result In=@(r._in) Out=@(r._out) oneditIn="result_editIn"></Result></li>
+                            }
+                        </ol>
                     </div>
                 </div>
             </div>
@@ -40,6 +50,9 @@
                 <div>
                     <div id="cmds">
                         <div class="cmds-elem">
+                            <input class="btn btn-secondary" type="button" value="cancelar" disabled=@(!calculating && expr_ok ) @onclick="cancel_click" />
+                        </div>
+                        <div class="cmds-elem">
                             <input class="btn btn-primary" type="submit" value="calcular" disabled=@(calculating || !expr_ok ) />
                         </div>
                         @if (showdec)
@@ -49,13 +62,13 @@
                             </div>
                         }
                         <div class="cmds-elem">
-                            <input id="chkshowdec" type="checkbox" class="form-check-input" checked=@showdec @onchange=@(e=> showdec=(bool) e.Value) disabled=@calculating />
+                            <input id="chkshowdec" type="checkbox" class="form-check-input" checked=@showdec @onchange=@(e => showdec = (bool)e.Value) disabled=@calculating />
                             <label for="chkshowdec" class="form-check-label">Mostrar números decimales</label>
                         </div>
                     </div>
                 </div>
                 <div>
-                    <textarea @ref="ref_expr" id="input" @bind=@expr autofocus required class="form-control" rows="1" style="resize:none;" disabled=@calculating @oninput="expr_input" />
+                    <textarea @ref="ref_expr" id="input" required class="form-control" rows="1" style="resize:none;" disabled=@calculating @bind=@expr @oninput="expr_input" />
                 </div>
             </div>
         </div>
@@ -65,7 +78,8 @@
 @code
 {
     private ElementReference ref_expr;
-    private DotNetObjectReference<Index> objref_input_timer;
+    private CancellationTokenSource tokencancel_input = null;
+    private CancellationTokenSource tokencancel_submit = null;
     private string name;
     private string version;
     private string descripcion;
@@ -78,6 +92,10 @@
     private bool showError;
     private string errorStr;
     private string linError;
+    private bool setFocusExpr = true;
+    private object _locktokencancel_input = new object();
+    private object _locktokencancel_submit = new object();
+    private List<(Expr _in, Expr _out)> results = new();
 
     protected override void OnInitialized()
     {
@@ -86,8 +104,7 @@
         var pAssembly = typeof(Index).Assembly;
         var pAttrs = pAssembly.GetCustomAttributes(false);
 
-        name = pAttrs.OfType<AssemblyTitleAttribute>
-    ().First().Title;
+        name = pAttrs.OfType<AssemblyTitleAttribute>().First().Title;
         version = pAssembly.GetName().Version.ToString();
         descripcion = pAttrs.OfType<AssemblyDescriptionAttribute>
             ().First().Description;
@@ -97,10 +114,36 @@
     {
         await base.OnAfterRenderAsync(firstRender);
 
+        if (setFocusExpr)
+        {
+            await ref_expr.FocusAsync();
+            setFocusExpr = false;
+        }
+
         if (!firstRender)
             return;
 
         await JsRuntime.InvokeVoidAsync("minicas.setautoexpand", ref_expr);
+    }
+
+    private async Task SetExpr(string _expr)
+    {
+        expr_ok = false;
+
+        CancellationTokenSource t = null;
+
+        lock (_locktokencancel_input)
+        {
+            t = tokencancel_input;
+            if (t != null && !t.IsCancellationRequested)
+                t.Cancel();
+
+            t = tokencancel_input = new CancellationTokenSource();
+        };
+
+        expr = Convert.ToString(_expr);
+        expr_latex = (await Parser.ParseToLatex(expr, t.Token)).ToString();
+        expr_ok = !string.IsNullOrWhiteSpace(expr);
     }
 
     private async Task expr_input(ChangeEventArgs e)
@@ -109,35 +152,96 @@
         //input.style.height='auto';
         //input.style.height=(input.scrollHeight)+'px';
         //})()");
-        //expr_latex = Convert.ToString(e.Value);
-        expr_ok = !string.IsNullOrWhiteSpace(expr_latex);
-        objref_input_timer = DotNetObjectReference.Create(this);
 
-        var id = await JsRuntime.InvokeAsync<int>("minicas.setExprInputTimer", objref_input_timer, 100);
-    }
-
-    [JSInvokable]
-    public async Task expr_input_timer()
-    {
-        //await JsRuntime.InvokeVoidAsync("alert", "timer");
-        var latex = await new MiniCAS.Core.Syntax.Parser().ParseToLatex(expr, System.Threading.CancellationToken.None);
-
-        expr_latex = latex.ToString();
-        StateHasChanged();
+        await SetExpr(Convert.ToString(e.Value));
     }
 
     private async Task submit()
     {
+        cancel_click();
+
+        var posErr = (int?)null;
+        Expr _in = null;
+        Expr _out = null;
+        CancellationTokenSource t = null;
+
+        lock (_locktokencancel_submit)
+        {
+            tokencancel_submit = t = new CancellationTokenSource();
+        }
+
+        showError = false;
+        errorStr = linError = string.Empty;
         calculating = true;
-        //await Task.Delay(4000);
-        calculating = false;
-        if (expr.Length >= 3)
+        try
+        {
+            _in = await Parser.Parse(expr, t.Token);
+            _out = _in;
+            //await Task.Delay(4000, t.Token);
+        }
+        catch (OperationCanceledException)
+        {
+        }
+        catch (STException ex)
         {
             showError = true;
-            errorStr = "sintaxis error en la línea 1 columna 3";
-            linError = $"{expr.Substring(0, 2)}<mark>{expr[2]}</mark>{expr.Substring(3)}";
-            await ref_expr.FocusAsync();
-            await JsRuntime.InvokeVoidAsync("minicas.setSelectionRange", ref_expr, 2, 3);
+            errorStr = string.Format("{0} en la línea {1} columna {2}", ex.Message, ex.Line, ex.Column);
+            posErr = ex.Position;
+        }
+        catch (Exception ex)
+        {
+            showError = true;
+            errorStr = ex.Message;
+        }
+        finally
+        {
+            calculating = false;
+        }
+        await ref_expr.FocusAsync();
+        if (posErr.HasValue)
+        {
+            linError = $"{expr.Substring(0, posErr.Value)}<mark>{expr[posErr.Value]}</mark>{expr.Substring(posErr.Value + 1)}";
+            await JsRuntime.InvokeVoidAsync("minicas.setSelectionRange", ref_expr, posErr.Value, posErr.Value + 1);
+        }
+        else if (_in != null && _out != null)
+        {
+            expr_latex = expr = null;
+            expr_ok = false;
+            results.Add(new(_in, _out));
+        }
+        setFocusExpr = true;
+        //if (expr.Length >= 3)
+        //{
+        //    expr_ok = false;
+        //    showError = true;
+        //    errorStr = "sintaxis error en la línea 1 columna 3";
+        //    linError = $"{expr.Substring(0, 2)}<mark>{expr[2]}</mark>{expr.Substring(3)}";
+
+        //    await JsRuntime.InvokeVoidAsync("minicas.setSelectionRange", ref_expr, 2, 3);
+        //}
+    }
+
+    private void cancel_click()
+    {
+        CancellationTokenSource t = null;
+
+        lock (_locktokencancel_submit)
+        {
+            t = tokencancel_input;
+            if (t != null && !t.IsCancellationRequested)
+                t.Cancel();
+
+            tokencancel_submit = null;
+        };
+    }
+
+    private async Task result_editIn(Expr e)
+    {
+        if (e != null)
+        {
+            await SetExpr(e.ToString());
+            setFocusExpr = true;
+            StateHasChanged();
         }
     }
 }

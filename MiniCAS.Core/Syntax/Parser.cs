@@ -41,13 +41,13 @@ namespace MiniCAS.Core.Syntax
         private Stack<(Token Operation, List<(Token Token, Expr.Expr Expr)> Exprs)> stack;
         private Tokenizer tokenizer;
 
-        public Task<Expr.Expr> Parse(string expr, CancellationToken token) => Parse(expr, false, token);
+        public static Task<Expr.Expr> Parse(string expr, CancellationToken token) => new Parser().Parse(expr, false, token);
 
-        public async Task<LaTex> ParseToLatex(string expr, CancellationToken token)
+        public static async Task<LaTex> ParseToLatex(string expr, CancellationToken token)
         {
             try
             {
-                var e = await Parse(expr, true, token);
+                var e = await new Parser().Parse(expr, true, token);
 
                 token.ThrowIfCancellationRequested();
 
@@ -69,9 +69,23 @@ namespace MiniCAS.Core.Syntax
             {
                 token.ThrowIfCancellationRequested();
 
-                await tokenizer.NextToken(token);
-                if (!ProcessToken(argNoThrowEx))
-                    break;
+                try
+                {
+                    await tokenizer.NextToken(token);
+                    if (!ProcessToken(argNoThrowEx))
+                        break;
+                }
+                catch
+                {
+                    if (argNoThrowEx)
+                    {
+                        CompleteAct();
+
+                        break;
+                    }
+
+                    throw;
+                }
             }
 
             return ProcessAll(token);
@@ -103,10 +117,8 @@ namespace MiniCAS.Core.Syntax
                 stack.Push(new(token, new(new[] { (token, expr) })));
             else
             {
-                if (argNoThrowEx)
-                    expr = new Expr.TokenExpr(token);
-                else
-                    throw new STException(token.Position, token.Line, token.Column, string.Format(Properties.Resources.NoExpectTokenException, token.TokenStr));
+                throw new NotImplementedException();
+                //throw new STException(token.Position, token.Line, token.Column, string.Format(Properties.Resources.NoExpectTokenException, token.TokenStr));
             }
 
             return expr.TypeExpr != Expr.EExprType.Token;
@@ -130,6 +142,11 @@ namespace MiniCAS.Core.Syntax
                 return;
 
             throw new NotImplementedException();
+        }
+
+        private void CompleteAct()
+        {
+
         }
 
         private Expr.Expr ProcessAll(CancellationToken token)

@@ -1,0 +1,47 @@
+﻿@using MiniCAS.Core.Expr;
+
+<div>
+    Expresión&nbsp;
+    @if (oneditIn != null && In != null)
+    {
+        <button type="button" @onclick="editIn_click">Edit</button>
+    }
+</div>
+<div>
+    @if (In != null)
+    {
+        <Latex Value=@(In.ToLatex().ToString())></Latex>
+    }
+</div>
+<div>
+    Resultado&nbsp;
+    @if (oneditOut != null && Out != null)
+    {
+        <button type="button" @onclick="editOut_click">Edit</button>
+    }
+</div>
+<div>
+    @if (Out != null)
+    {
+        <Latex Value=@(Out.ToLatex().ToString())></Latex>
+    }
+</div>
+
+@code {
+    [Parameter] public Expr In { get; set; } = null;
+    [Parameter] public Expr Out { get; set; } = null;
+    [Parameter] public Func<Expr, Task> oneditIn { get; set; }
+    [Parameter] public Func<Expr, Task> oneditOut { get; set; }
+
+    public async void editIn_click()
+    {
+        if (oneditIn != null && In != null)
+            await oneditIn(In);
+    }
+
+    public async void editOut_click()
+    {
+        if (oneditOut != null && Out != null)
+            await oneditOut(Out);
+    }
+}

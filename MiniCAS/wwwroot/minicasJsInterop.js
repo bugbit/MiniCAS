@@ -18,12 +18,6 @@ window.minicas =
     },
     setSelectionRange: function (textarea, start, end) {
         textarea.setSelectionRange(start, end);
-    },
-    setExprInputTimer: function (dotNetHelper, ms) {
-        return setTimeout(
-            function () { dotNetHelper.invokeMethodAsync("expr_input_timer"); },
-            ms
-        );
     }
     ,
     processLatex: async function (input, isDisplay) {

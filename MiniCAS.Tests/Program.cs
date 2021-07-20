@@ -148,14 +148,12 @@ namespace MiniCAS.Tests
 
             foreach (var t in texts)
             {
-                var token = new Core.Syntax.Parser();
-
                 Write($"{t}: ");
 
                 try
                 {
 
-                    var expr = await token.Parse(t, CancellationToken.None);
+                    var expr = await Core.Syntax.Parser.Parse(t, CancellationToken.None);
 
                     WriteLine(expr);
                 }

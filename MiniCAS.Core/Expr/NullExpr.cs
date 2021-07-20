@@ -33,13 +33,12 @@ using System.Threading.Tasks;
 
 namespace MiniCAS.Core.Expr
 {
-    public enum EExprType
+    public sealed class NullExpr : Expr
     {
-        AlgExpr, Token, Null
-    }
+        private static readonly Lazy<NullExpr> instance = new Lazy<NullExpr>(() => new());
 
-    public enum EAlgExprType
-    {
-        Number
+        private NullExpr() : base(EExprType.Null) { }
+
+        public static NullExpr Instance => instance.Value;
     }
 }
