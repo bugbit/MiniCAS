@@ -1,4 +1,5 @@
-﻿@using MiniCAS.Core.Expr;
+﻿@using System.Collections;
+@using MiniCAS.Core.Expr;
 
 <div>
     Expresión&nbsp;
@@ -26,10 +27,15 @@
         <Latex Value=@(Out.ToLatex().ToString())></Latex>
     }
 </div>
+@if (Details != null)
+{
+    <div>Detalles:</div>
+}
 
 @code {
     [Parameter] public Expr In { get; set; } = null;
     [Parameter] public Expr Out { get; set; } = null;
+    [Parameter] public ArrayList Details { get; set; } = null;
     [Parameter] public Func<Expr, Task> oneditIn { get; set; }
     [Parameter] public Func<Expr, Task> oneditOut { get; set; }
 
