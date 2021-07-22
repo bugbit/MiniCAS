@@ -71,4 +71,24 @@ namespace MiniCAS.Core.Expr
         // NumberDecimalSeparator always ".", not used NumberFormatInfo
         public override string ToString() => NumberToString(Value);
     }
+
+    public partial class FunctionExpr
+    {
+        public override string ToString()
+        {
+            var _params = string.Join<Expr>(',', Params);
+
+            return $"{Function.name}({_params})";
+        }
+
+        public override LaTex ToLatex()
+        {
+            var latex = base.ToLatex();
+            var _params = string.Join<Expr>(',', Params);
+
+            latex.AppendOperationName(Function.name, _params);
+
+            return latex;
+        }
+    }
 }

@@ -33,17 +33,15 @@ using System.Threading.Tasks;
 
 namespace MiniCAS.Core.Expr
 {
-    public partial class Expr
+    public partial class FunctionExpr : Expr
     {
-        public virtual Task<Expr> Eval() => Task.FromResult(this);
-        public virtual async Task<Expr> EvalAndApprox(int? numdec)
+        public FunctionExpr(Function f, IEnumerable<Expr> _params) : base(EExprType.Function)
         {
-            var r = await Eval();
-
-            if (numdec.HasValue)
-                r = await r.Approx(numdec.Value);
-
-            return r;
+            Function = f;
+            Params = _params.ToArray();
         }
+
+        public Function Function { get; }
+        public Expr[] Params { get; }
     }
 }

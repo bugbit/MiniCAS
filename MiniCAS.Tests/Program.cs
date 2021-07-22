@@ -35,6 +35,7 @@ using MiniCAS.Core.Expr;
 
 using static System.Console;
 using static MiniCAS.Core.Math.MathEx;
+using System.Diagnostics;
 
 namespace MiniCAS.Tests
 {
@@ -143,7 +144,8 @@ namespace MiniCAS.Tests
         {
             var texts = new[]
             {
-                "20","2.30","-30","aa","2x"
+                //"20","2.30","-30","aa","2x"
+                "ifactors","ifactors 3"
             };
 
             foreach (var t in texts)
@@ -170,7 +172,7 @@ namespace MiniCAS.Tests
             }
         }
 
-        [Test]
+        //[Test]
         static void BigDecimalRoundTest()
         {
             var numbers = new (BigDecimal n, int numdec)[]
@@ -189,6 +191,43 @@ namespace MiniCAS.Tests
                     var r = n.n.Round(n.numdec);
 
                     WriteLine(NumberToString(r));
+                }
+                catch (Exception ex)
+                {
+                    PrintError(ex.Message);
+                }
+            }
+        }
+
+        [Test]
+        static void BigIntegerIFactorsTest()
+        {
+            var numbers = new BigInteger[]
+            {
+                120,898,999999999999999999,9223372036854775809
+            };
+
+            foreach (var n in numbers)
+            {
+                var len = n.ToString().Length;
+
+                Write($"{NumberToString(n)}: ");
+
+                try
+                {
+                    var stopwatch = Stopwatch.StartNew();
+                    var factors = Ifactors(n, CancellationToken.None);
+
+                    stopwatch.Stop();
+
+                    WriteLine(stopwatch.Elapsed);
+
+                    foreach (var f in factors)
+                    {
+                        Write(f.n.ToString().PadLeft(len));
+                        Write(" | ");
+                        WriteLine(f.i);
+                    }
                 }
                 catch (Exception ex)
                 {

@@ -70,11 +70,29 @@ namespace MiniCAS.Core.Properties {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a For a positive integer n returns the factorization of n.
+        /// </summary>
+        internal static string ifactorsDef {
+            get {
+                return ResourceManager.GetString("ifactorsDef", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a I didn&apos;t expect a {0}..
         /// </summary>
         internal static string NoExpectTokenException {
             get {
                 return ResourceManager.GetString("NoExpectTokenException", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a &apos;{0}&apos; is not integer..
+        /// </summary>
+        internal static string NoExpressionInteger {
+            get {
+                return ResourceManager.GetString("NoExpressionInteger", resourceCulture);
             }
         }
         

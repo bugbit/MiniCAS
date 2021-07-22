@@ -16,6 +16,8 @@
     </li>
     <li><ul>
         <li>prime factorization<br>
+        https://www.codeproject.com/Tips/155308/Fast-Prime-Factoring-Algorithm-2
+
 Simplificar<br>
 http://www.montereyinstitute.org/courses/Algebra1/COURSE_TEXT_RESOURCE/U11_L1_T1_text_final_es.html<br>            
         </li>

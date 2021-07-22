@@ -33,17 +33,5 @@ using System.Threading.Tasks;
 
 namespace MiniCAS.Core.Expr
 {
-    public partial class Expr
-    {
-        public virtual Task<Expr> Eval() => Task.FromResult(this);
-        public virtual async Task<Expr> EvalAndApprox(int? numdec)
-        {
-            var r = await Eval();
-
-            if (numdec.HasValue)
-                r = await r.Approx(numdec.Value);
-
-            return r;
-        }
-    }
+    public record Function(string name, string DefinitionRes, Func<Expr, Task<Expr>> Calc, int? NumParamMin = null, int? NumParamMax = null);
 }

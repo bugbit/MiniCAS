@@ -38,7 +38,7 @@ namespace MiniCAS.Core.Syntax
 {
     public class Parser
     {
-        private Stack<(Token Operation, List<(Token Token, Expr.Expr Expr)> Exprs)> stack;
+        private Stack<(Token Operation, List<Expr.Expr> Exprs)> stack;
         private Tokenizer tokenizer;
 
         public static Task<Expr.Expr> Parse(string expr, CancellationToken token) => new Parser().Parse(expr, false, token);
@@ -99,29 +99,36 @@ namespace MiniCAS.Core.Syntax
             var token = tokenizer.ToToken();
             Expr.Expr expr = null;
 
-            if (token.TokenType == ETokenType.Number)
+            switch (token.TokenType)
             {
-                var n = BigDecimal.Parse(token.TokenStr);
+                case ETokenType.Number:
+                    var n = BigDecimal.Parse(token.TokenStr);
 
-                expr = Expr.Expr.MakeNumber(n);
-            }
-            else
-            {
-                if (argNoThrowEx)
-                    expr = new Expr.TokenExpr(token);
-                else
-                    throw new STException(token.Position, token.Line, token.Column, string.Format(Properties.Resources.NoRecognizeStError, token.TokenStr));
+                    expr = Expr.Expr.MakeNumber(n);
+                    break;
+                case ETokenType.Function:
+                    break;
+                default:
+                    if (argNoThrowEx)
+                        expr = Expr.Expr.MakeToken(token);
+                    else
+                        throw new STException(token.Position, token.Line, token.Column, string.Format(Properties.Resources.NoRecognizeStError, token.TokenStr));
+                    break;
             }
 
             if (stack.Count == 0)
-                stack.Push(new(token, new(new[] { (token, expr) })));
-            else
             {
-                throw new NotImplementedException();
-                //throw new STException(token.Position, token.Line, token.Column, string.Format(Properties.Resources.NoExpectTokenException, token.TokenStr));
-            }
+                (Token Operation, List<Expr.Expr> Exprs) item = (token, new());
 
-            return expr.TypeExpr != Expr.EExprType.Token;
+                if (expr != null)
+                    item.Exprs.Add(expr);
+
+                stack.Push(item);
+            }
+            else
+                ProcessExprPeek(expr);
+
+            return expr == null || expr.TypeExpr != Expr.EExprType.Token;
         }
 
         private Expr.Expr PopAndProcess()
@@ -129,8 +136,22 @@ namespace MiniCAS.Core.Syntax
             if (stack.Count == 0)
                 return null;
 
-            var expr = stack.Pop().Exprs[0].Expr;
+            if (!stack.TryPop(out (Token Operation, List<Expr.Expr> Exprs) item))
+                return null;
 
+            Expr.Expr expr;
+
+            switch (item.Operation.TokenType)
+            {
+                case ETokenType.Number:
+                    expr = item.Exprs[0];
+                    break;
+                case ETokenType.Function:
+                    expr = Expr.Expr.MakeFunction(Expr.Functions.Instance.GetFunction(item.Operation.TokenStr), item.Exprs);
+                    break;
+                default:
+                    throw new NotImplementedException();
+            }
             ProcessExprPeek(expr);
 
             return expr;
@@ -138,15 +159,26 @@ namespace MiniCAS.Core.Syntax
 
         private void ProcessExprPeek(Expr.Expr expr)
         {
-            if (stack.Count == 0)
+            if (!stack.TryPeek(out (Token Operation, List<Expr.Expr> Exprs) item))
                 return;
 
-            throw new NotImplementedException();
+            var token = item.Operation;
+
+            switch (item.Operation.TokenType)
+            {
+                case ETokenType.Function:
+                    if (expr == null)
+                        throw new STException(token.Position, token.Line, token.Column, string.Format(Properties.Resources.NoExpectTokenException, token.TokenStr));
+
+                    item.Exprs.Add(expr);
+                    break;
+                default:
+                    throw new STException(token.Position, token.Line, token.Column, string.Format(Properties.Resources.NoExpectTokenException, token.TokenStr));
+            }
         }
 
         private void CompleteAct()
         {
-
         }
 
         private Expr.Expr ProcessAll(CancellationToken token)

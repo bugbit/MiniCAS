@@ -73,7 +73,7 @@ namespace MiniCAS.Core.Output
 
         public LaTex AppendBrackets(object a) => AppendBeginBrackets().Append(a).AppendEndBrackets();
 
-        public LaTex AppendFrac(object a, object b) => Append("\frac").AppendBrackets(a).AppendBrackets(b);
+        public LaTex AppendFrac(object a, object b) => Append(@"\frac").AppendBrackets(a).AppendBrackets(b);
 
         public LaTex AppendBeginArray() => Append(@"\begin{array} ");
         public LaTex AppendRowArray(params object[] objs)
@@ -95,5 +95,7 @@ namespace MiniCAS.Core.Output
 
         public LaTex AppendEquation(params object[] objs) => AppendEquation(objs.AsEnumerable());
         public LaTex AppendEquation(IEnumerable<object> objs) => AppendJoin("=", objs);
+
+        public LaTex AppendOperationName(string opname, string _params) => Append(@"\operatorname").AppendBeginBrackets().Append(opname).AppendEndBrackets().Append($"({_params})");
     }
 }

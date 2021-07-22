@@ -49,8 +49,10 @@ namespace MiniCAS.Core.Expr
 
         protected string DebugView => ToString();
 
+        public static TokenExpr MakeToken(Syntax.Token n) => new(n);
         public static NumberIntegerExpr MakeNumber(BigInteger n) => new(n);
         public static NumberExpr MakeNumber(BigDecimal n) => (IsInteger(n)) ? new NumberIntegerExpr((BigInteger)n) : new NumberRealExpr(n);
         public static NumberExpr MakeNumber(decimal n) => (IsInteger(n)) ? new NumberIntegerExpr((BigInteger)n) : new NumberDecimalExpr(n);
+        public static FunctionExpr MakeFunction(Function f, IEnumerable<Expr> _params) => new(f, _params);
     }
 }

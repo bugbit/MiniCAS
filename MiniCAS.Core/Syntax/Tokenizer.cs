@@ -37,11 +37,12 @@ namespace MiniCAS.Core.Syntax
 {
     public sealed class Tokenizer
     {
-        private static readonly (Regex regex, ETokenType type)[] regTokens = new[]
+        private static readonly (Regex regex, ETokenType type, int priority)[] regTokens = new[]
             {
-                (new Regex(@"^[ \f\t\v]+",RegexOptions.Compiled),ETokenType.Spaces),
-                (new Regex(@"^[\r\n]+",RegexOptions.Compiled),ETokenType.NewLine),
-                (new Regex(@"(?<token>^(\d*\.)?\d+)",RegexOptions.Compiled),ETokenType.Number)
+                (new Regex(@"^[ \f\t\v]+",RegexOptions.Compiled),ETokenType.Spaces,0),
+                (new Regex(@"^[\r\n]+",RegexOptions.Compiled),ETokenType.NewLine,0),
+                (new Regex(@"(?<token>^(\d*\.)?\d+)",RegexOptions.Compiled),ETokenType.Number,0),
+                (Expr.Functions.Instance.RegToken,ETokenType.Function,0)
             };
 
         private string text;
@@ -91,6 +92,7 @@ namespace MiniCAS.Core.Syntax
                 from r in regTokens.AsParallel().WithCancellation(token)
                 let m = r.regex.Match(text)
                 where m.Success
+                orderby r.priority
                 select new { r.type, m }
             ).FirstOrDefault();
 

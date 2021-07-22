@@ -29,21 +29,42 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace MiniCAS.Core.Expr
 {
-    public partial class Expr
+    public class Functions
     {
-        public virtual Task<Expr> Eval() => Task.FromResult(this);
-        public virtual async Task<Expr> EvalAndApprox(int? numdec)
+        private static readonly Lazy<Functions> instance = new Lazy<Functions>(() => new());
+        private readonly Dictionary<string, Function> funciones = new Function[]
         {
-            var r = await Eval();
+            new("ifactors","ifactorsDef", null, 1, 1)
+        }.ToDictionary(f => f.name, f => f);
+        private readonly Lazy<Regex> regToken;
 
-            if (numdec.HasValue)
-                r = await r.Approx(numdec.Value);
+        private Functions()
+        {
+            regToken = new Lazy<Regex>(MakeRegToken);
+        }
 
-            return r;
+        public static Functions Instance => instance.Value;
+
+        public Regex RegToken => regToken.Value;
+
+        public Function GetFunction(string fnname)
+        {
+            funciones.TryGetValue(fnname, out Function f);
+
+            return f;
+        }
+
+        private Regex MakeRegToken()
+        {
+            var fnnames = string.Join("|", funciones.Keys);
+            var regex = new Regex($@"(?<token>^{fnnames})", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+
+            return regex;
         }
     }
 }

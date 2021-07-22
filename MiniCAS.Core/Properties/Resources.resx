@@ -120,8 +120,14 @@
   <data name="ExpectTokenException" xml:space="preserve">
     <value>I expect a {0}.</value>
   </data>
+  <data name="ifactorsDef" xml:space="preserve">
+    <value>For a positive integer n returns the factorization of n</value>
+  </data>
   <data name="NoExpectTokenException" xml:space="preserve">
     <value>I didn't expect a {0}.</value>
+  </data>
+  <data name="NoExpressionInteger" xml:space="preserve">
+    <value>'{0}' is not integer.</value>
   </data>
   <data name="NoRecognizeStError" xml:space="preserve">
     <value>I don't recognize '{0}'</value>

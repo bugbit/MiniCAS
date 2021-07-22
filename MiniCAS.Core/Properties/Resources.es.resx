@@ -120,8 +120,14 @@
   <data name="ExpectTokenException" xml:space="preserve">
     <value>Esperaba {0}.</value>
   </data>
+  <data name="ifactorsDef" xml:space="preserve">
+    <value>Devuelve la factorización del entero positivo n</value>
+  </data>
   <data name="NoExpectTokenException" xml:space="preserve">
     <value>No esperaba {0}.</value>
+  </data>
+  <data name="NoExpressionInteger" xml:space="preserve">
+    <value>'{0}' no es un entero</value>
   </data>
   <data name="NoRecognizeStError" xml:space="preserve">
     <value>No reconozco '{0}'</value>

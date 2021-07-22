@@ -28,22 +28,28 @@ SOFTWARE.
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace MiniCAS.Core.Expr
 {
-    public partial class Expr
+    public class ExprException : Exception
     {
-        public virtual Task<Expr> Eval() => Task.FromResult(this);
-        public virtual async Task<Expr> EvalAndApprox(int? numdec)
+        public ExprException()
         {
-            var r = await Eval();
+        }
 
-            if (numdec.HasValue)
-                r = await r.Approx(numdec.Value);
+        public ExprException(string message) : base(message)
+        {
+        }
 
-            return r;
+        public ExprException(string message, Exception innerException) : base(message, innerException)
+        {
+        }
+
+        protected ExprException(SerializationInfo info, StreamingContext context) : base(info, context)
+        {
         }
     }
 }
