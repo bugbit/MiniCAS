@@ -21,6 +21,10 @@
         <button type="button" @onclick="editOut_click">Edit</button>
     }
 </div>
+@if (Elapsed.HasValue)
+{
+    <div>@(Elapsed.Value.ToString("g"))&nbsp;Elapsed</div>
+}
 <div>
     @if (Out != null)
     {
@@ -36,6 +40,7 @@
     [Parameter] public Expr In { get; set; } = null;
     [Parameter] public Expr Out { get; set; } = null;
     [Parameter] public ArrayList Details { get; set; } = null;
+    [Parameter] public TimeSpan? Elapsed { get; set; } = null;
     [Parameter] public Func<Expr, Task> oneditIn { get; set; }
     [Parameter] public Func<Expr, Task> oneditOut { get; set; }
 

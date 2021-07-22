@@ -1,6 +1,7 @@
 ﻿@page "/"
 @inject IJSRuntime JsRuntime;
 @using System.Collections;
+@using System.Diagnostics;
 @using System.Reflection;
 @using System.Threading;
 @using MiniCAS.Core.Syntax;
@@ -23,7 +24,7 @@
                         <ol>
                             @foreach (var r in results)
                             {
-                                <li><Result In=@(r._in) Out=@(r._out) oneditIn="result_editIn"></Result></li>
+                                <li><Result In=@(r._in) Out=@(r._out) Elapsed=@(r.elapsed) oneditIn="result_editIn"></Result></li>
                             }
                         </ol>
                     </div>
@@ -96,7 +97,7 @@
     private bool setFocusExpr = true;
     private object _locktokencancel_input = new object();
     private object _locktokencancel_submit = new object();
-    private List<(Expr _in, Expr _out, ArrayList details)> results = new();
+    private List<(Expr _in, Expr _out, ArrayList details, TimeSpan? elapsed)> results = new();
 
     protected override void OnInitialized()
     {
@@ -164,6 +165,7 @@
         var posErr = (int?)null;
         Expr _in = null;
         Expr _out = null;
+        Stopwatch _stopwatch = null;
         CancellationTokenSource t = null;
 
         lock (_locktokencancel_submit)
@@ -176,8 +178,11 @@
         calculating = true;
         try
         {
+            _stopwatch = Stopwatch.StartNew();
+
             _in = await Parser.Parse(expr, t.Token);
             _out = await _in.EvalAndApprox((showdec) ? numdec : null);
+            _stopwatch.Stop();
             //await Task.Delay(4000, t.Token);
         }
         catch (OperationCanceledException)
@@ -208,7 +213,7 @@
         {
             expr_latex = expr = null;
             expr_ok = false;
-            results.Add(new(_in, _out, null));
+            results.Add(new(_in, _out, null, _stopwatch?.Elapsed));
         }
         setFocusExpr = true;
     }

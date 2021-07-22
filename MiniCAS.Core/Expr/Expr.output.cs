@@ -49,6 +49,13 @@ namespace MiniCAS.Core.Expr
         public override LaTex ToLatex() => base.ToLatex().Append(Token.TokenStr);
     }
 
+    public partial class ResultExpr
+    {
+        public override string ToString() => Result.ToString();
+
+        public override LaTex ToLatex() => Result.ToLatex();
+    }
+
     public partial class NumberExpr<T>
     {
         public override LaTex ToLatex() => base.ToLatex().Append(Value);
