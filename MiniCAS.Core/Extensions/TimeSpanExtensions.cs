@@ -31,18 +31,30 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MiniCAS.Core.Expr
+namespace MiniCAS.Core.Extensions
 {
-    public partial class FunctionExpr : Expr
+    public static class TimeSpanExtensions
     {
-        public FunctionExpr(Function f, ICollection<Expr> _params) : base(EExprType.Function)
+        public static string ToShortString(this TimeSpan t)
         {
-            f.VerifNumParams(_params.Count);
-            Function = f;
-            Params = _params.ToArray();
-        }
+            var strs = new List<string>();
 
-        public Function Function { get; }
-        public Expr[] Params { get; }
+            if (t.Hours == 1)
+                strs.Add(string.Format(Properties.Resources.TimespanHour, t.Hours));
+            else if (t.Hours > 1)
+                strs.Add(string.Format(Properties.Resources.TimespanHours, t.Hours));
+            if (t.Minutes == 1)
+                strs.Add(string.Format(Properties.Resources.TimespanMinute, t.Minutes));
+            else if (t.Minutes > 1)
+                strs.Add(string.Format(Properties.Resources.TimespanMinutes, t.Minutes));
+            if (t.Seconds == 1)
+                strs.Add(string.Format(Properties.Resources.TimespanSecond, t.Seconds));
+            else if (t.Seconds > 1)
+                strs.Add(string.Format(Properties.Resources.TimespanSeconds, t.Seconds));
+            if (t.Milliseconds > 0)
+                strs.Add(string.Format(Properties.Resources.TimespanMiliSeconds, t.Milliseconds));
+
+            return string.Join(' ', strs);
+        }
     }
 }

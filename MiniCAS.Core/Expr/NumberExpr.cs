@@ -46,6 +46,13 @@ namespace MiniCAS.Core.Expr
         public virtual decimal ValueAsDecimal => 0;
 
         protected NumberExpr() : base(EAlgExprType.Number) { }
+
+        public override bool IsNumberExpr(out NumberExpr expr)
+        {
+            expr = this;
+
+            return true;
+        }
     }
 
     [DebuggerDisplay("TypeExpr : {TypeExpr} AlgExprType : {AlgExprType} IsZ : {IsZ} IsR : {IsR} IsDecimal : {IsDecimal} Value : {Value} {DebugView}")]

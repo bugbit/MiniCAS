@@ -28,21 +28,23 @@ SOFTWARE.
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace MiniCAS.Core.Expr
 {
-    public partial class FunctionExpr : Expr
+    public partial class Expr
     {
-        public FunctionExpr(Function f, ICollection<Expr> _params) : base(EExprType.Function)
-        {
-            f.VerifNumParams(_params.Count);
-            Function = f;
-            Params = _params.ToArray();
-        }
+        public Expr Simply() => null;
+        //public BigInteger SimplyToInteger()
+        //{
+        //    var expr = Simply();
 
-        public Function Function { get; }
-        public Expr[] Params { get; }
+        //    if (expr.AlgExprType != EAlgExprType.Number || !(expr is NumberExpr exprn) || !exprn.IsZ)
+        //        throw new ExprException();
+
+        //    return exprn.ValueAsInteger;
+        //}
     }
 }

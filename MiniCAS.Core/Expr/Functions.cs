@@ -39,16 +39,16 @@ namespace MiniCAS.Core.Expr
         private static readonly Lazy<Functions> instance = new Lazy<Functions>(() => new());
         private readonly Dictionary<string, Function> funciones = new Function[]
         {
-            new("ifactors","ifactorsDef", null, 1, 1)
+            new("ifactors","ifactorsDef", Expr.IFactors, 1, 1)
         }.ToDictionary(f => f.name, f => f);
         private readonly Lazy<Regex> regToken;
+
+        public static Functions Instance => instance.Value;
 
         private Functions()
         {
             regToken = new Lazy<Regex>(MakeRegToken);
         }
-
-        public static Functions Instance => instance.Value;
 
         public Regex RegToken => regToken.Value;
 

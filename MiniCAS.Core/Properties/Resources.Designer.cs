@@ -79,6 +79,24 @@ namespace MiniCAS.Core.Properties {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a Expected {0} max params.
+        /// </summary>
+        internal static string MaxNumParamsException {
+            get {
+                return ResourceManager.GetString("MaxNumParamsException", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Expected {0} min parametros.
+        /// </summary>
+        internal static string MinNumParamsException {
+            get {
+                return ResourceManager.GetString("MinNumParamsException", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a I didn&apos;t expect a {0}..
         /// </summary>
         internal static string NoExpectTokenException {
@@ -102,6 +120,78 @@ namespace MiniCAS.Core.Properties {
         internal static string NoRecognizeStError {
             get {
                 return ResourceManager.GetString("NoRecognizeStError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Expected {0} params.
+        /// </summary>
+        internal static string NumParamsException {
+            get {
+                return ResourceManager.GetString("NumParamsException", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a {0} hour.
+        /// </summary>
+        internal static string TimespanHour {
+            get {
+                return ResourceManager.GetString("TimespanHour", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a {0} hours.
+        /// </summary>
+        internal static string TimespanHours {
+            get {
+                return ResourceManager.GetString("TimespanHours", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a {0} ms.
+        /// </summary>
+        internal static string TimespanMiliSeconds {
+            get {
+                return ResourceManager.GetString("TimespanMiliSeconds", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a {0} minute.
+        /// </summary>
+        internal static string TimespanMinute {
+            get {
+                return ResourceManager.GetString("TimespanMinute", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a {0} minutes.
+        /// </summary>
+        internal static string TimespanMinutes {
+            get {
+                return ResourceManager.GetString("TimespanMinutes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a {0} second.
+        /// </summary>
+        internal static string TimespanSecond {
+            get {
+                return ResourceManager.GetString("TimespanSecond", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a {0} seconds.
+        /// </summary>
+        internal static string TimespanSeconds {
+            get {
+                return ResourceManager.GetString("TimespanSeconds", resourceCulture);
             }
         }
     }

@@ -123,6 +123,12 @@
   <data name="ifactorsDef" xml:space="preserve">
     <value>For a positive integer n returns the factorization of n</value>
   </data>
+  <data name="MaxNumParamsException" xml:space="preserve">
+    <value>Expected {0} max params</value>
+  </data>
+  <data name="MinNumParamsException" xml:space="preserve">
+    <value>Expected {0} min parametros</value>
+  </data>
   <data name="NoExpectTokenException" xml:space="preserve">
     <value>I didn't expect a {0}.</value>
   </data>
@@ -131,5 +137,29 @@
   </data>
   <data name="NoRecognizeStError" xml:space="preserve">
     <value>I don't recognize '{0}'</value>
+  </data>
+  <data name="NumParamsException" xml:space="preserve">
+    <value>Expected {0} params</value>
+  </data>
+  <data name="TimespanHour" xml:space="preserve">
+    <value>{0} hour</value>
+  </data>
+  <data name="TimespanHours" xml:space="preserve">
+    <value>{0} hours</value>
+  </data>
+  <data name="TimespanMiliSeconds" xml:space="preserve">
+    <value>{0} ms</value>
+  </data>
+  <data name="TimespanMinute" xml:space="preserve">
+    <value>{0} minute</value>
+  </data>
+  <data name="TimespanMinutes" xml:space="preserve">
+    <value>{0} minutes</value>
+  </data>
+  <data name="TimespanSecond" xml:space="preserve">
+    <value>{0} second</value>
+  </data>
+  <data name="TimespanSeconds" xml:space="preserve">
+    <value>{0} seconds</value>
   </data>
 </root>

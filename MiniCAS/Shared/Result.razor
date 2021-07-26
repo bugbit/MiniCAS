@@ -1,5 +1,6 @@
 ﻿@using System.Collections;
 @using MiniCAS.Core.Expr;
+@using MiniCAS.Core.Extensions;
 
 <div>
     Expresión&nbsp;
@@ -23,7 +24,7 @@
 </div>
 @if (Elapsed.HasValue)
 {
-    <div>@(Elapsed.Value.ToString("g"))&nbsp;Elapsed</div>
+    <div>Tardó&nbsp;@(Elapsed.Value.ToShortString())</div>
 }
 <div>
     @if (Out != null)

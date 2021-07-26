@@ -147,7 +147,9 @@ namespace MiniCAS.Core.Syntax
                     expr = item.Exprs[0];
                     break;
                 case ETokenType.Function:
-                    expr = Expr.Expr.MakeFunction(Expr.Functions.Instance.GetFunction(item.Operation.TokenStr), item.Exprs);
+                    var fn = Expr.Functions.Instance.GetFunction(item.Operation.TokenStr);
+                    
+                    expr = Expr.Expr.MakeFunction(fn, item.Exprs);
                     break;
                 default:
                     throw new NotImplementedException();

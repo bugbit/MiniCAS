@@ -181,7 +181,7 @@
             _stopwatch = Stopwatch.StartNew();
 
             _in = await Parser.Parse(expr, t.Token);
-            _out = await _in.EvalAndApprox((showdec) ? numdec : null);
+            _out = await _in.EvalAndApprox((showdec) ? numdec : null, t.Token);
             _stopwatch.Stop();
             //await Task.Delay(4000, t.Token);
         }

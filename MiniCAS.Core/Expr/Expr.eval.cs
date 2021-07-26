@@ -29,21 +29,46 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
+using static MiniCAS.Core.Math.MathEx;
 
 namespace MiniCAS.Core.Expr
 {
     public partial class Expr
     {
-        public virtual Task<Expr> Eval() => Task.FromResult(this);
-        public virtual async Task<Expr> EvalAndApprox(int? numdec)
+        public virtual Task<Expr> Eval(CancellationToken token) => Task.FromResult(this);
+        public virtual async Task<Expr> EvalAndApprox(int? numdec, CancellationToken token)
         {
-            var r = await Eval();
+            var r = await Eval(token);
 
             if (numdec.HasValue)
                 r = await r.Approx(numdec.Value);
 
             return r;
+        }
+
+        public static Task<Expr> IFactors(Expr[] _params, CancellationToken token)
+        {
+            Function.VerifNumParams(_params.Length, 1, 1);
+
+            if (!_params[0].IsNumberExpr(out NumberExpr n) || !n.IsZ)
+                throw new ExprException();
+
+            //await Ifactors(n.ValueAsInteger, token);
+
+            return null;
+        }
+    }
+
+    public partial class FunctionExpr
+    {
+        public async override Task<Expr> Eval(CancellationToken token)
+        {
+            var _params = await Task.WhenAll(from p in Params select p.Eval(token));
+            var result = await Function.Calc.Invoke(_params, token);
+
+            return result;
         }
     }
 }

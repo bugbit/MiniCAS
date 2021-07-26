@@ -29,9 +29,30 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace MiniCAS.Core.Expr
 {
-    public record Function(string name, string DefinitionRes, Func<Expr, Task<Expr>> Calc, int? NumParamMin = null, int? NumParamMax = null);
+    public record Function(string name, string DefinitionRes, Func<Expr[], CancellationToken, Task<Expr>> Calc, int? NumParamMin = null, int? NumParamMax = null)
+    {
+        public static void VerifNumParams(int numP, int? min = null, int? max = null)
+        {
+            var pMsg = string.Empty;
+
+            if (min.HasValue && max.HasValue && min == max)
+                pMsg += string.Format(Properties.Resources.NumParamsException, max);
+            else
+            {
+                if (min.HasValue && numP < min.Value)
+                    pMsg += string.Format(Properties.Resources.MinNumParamsException, min);
+                if (max.HasValue && numP > max.Value)
+                    pMsg += string.Format(Properties.Resources.MaxNumParamsException, max);
+            }
+
+            if (!string.IsNullOrEmpty(pMsg))
+                throw new ExprException(pMsg);
+        }
+        public void VerifNumParams(int numP) => VerifNumParams(numP, NumParamMin, NumParamMax);
+    }
 }

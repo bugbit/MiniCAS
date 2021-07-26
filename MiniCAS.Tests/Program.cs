@@ -139,7 +139,7 @@ namespace MiniCAS.Tests
             }
         }
 
-        //[Test]
+        [Test]
         static async Task ParserTest()
         {
             var texts = new[]
@@ -199,7 +199,7 @@ namespace MiniCAS.Tests
             }
         }
 
-        [Test]
+        //[Test]
         static void BigIntegerIFactorsTest()
         {
             var numbers = new BigInteger[]
