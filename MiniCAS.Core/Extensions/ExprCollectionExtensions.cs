@@ -29,30 +29,24 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
+//using MiniCAS.Core.Expr;
 
-namespace MiniCAS.Core.Expr
+namespace MiniCAS.Core.Extensions
 {
-    public record Function(string name, string DefinitionRes, Func<Expr[], CancellationToken, Task<Expr>> Calc, int? NumParamMin = null, int? NumParamMax = null)
+    public static class ExprCollectionExtensions
     {
-        public static void VerifNumParams(int numP, int? min = null, int? max = null)
+        public static bool AddIfNotEmpyOrNotEqualsEnd<E>(this ICollection<E> exprs, E e) where E : Expr.Expr
         {
-            var pMsg = string.Empty;
+            if (e == null)
+                return false;
 
-            if (min.HasValue && max.HasValue && min == max && numP != max)
-                pMsg += string.Format(Properties.Resources.NumParamsException, max);
-            else
-            {
-                if (min.HasValue && numP < min.Value)
-                    pMsg += string.Format(Properties.Resources.MinNumParamsException, min);
-                if (max.HasValue && numP > max.Value)
-                    pMsg += string.Format(Properties.Resources.MaxNumParamsException, max);
-            }
+            var pAdded = exprs.Count == 0 || exprs.Last() != e;
 
-            if (!string.IsNullOrEmpty(pMsg))
-                throw new ExprException(pMsg);
+            if (pAdded)
+                exprs.Add(e);
+
+            return pAdded;
         }
-        public void VerifNumParams(int numP) => VerifNumParams(numP, NumParamMin, NumParamMax);
     }
 }

@@ -77,16 +77,16 @@ namespace MiniCAS.Core.Math
 
         private static readonly int smallprimes_last = smallprimes.Last();
 
-        public static (BigInteger n, BigInteger i)[] Ifactors(BigInteger n, CancellationToken cancel)
+        public async static Task<(BigInteger n, BigInteger i)[]> Ifactors(BigInteger n, CancellationToken cancel)
         {
             var factors = new List<(BigInteger n, BigInteger i)>();
-            var max = Sqrt(n) + 1;
+            var max = await SqrtAsync(n, cancel) + 1;
             var max2 = (max < smallprimes_last) ? (int)max : smallprimes_last;
 
-            ifactors_smallPrimes(ref n, max2, cancel, factors);
+            n = await ifactors_smallPrimes(n, max2, cancel, factors);
             if (n > smallprimes_last)
             {
-                ifactors_factors(ref n, max, cancel, factors);
+                n = await ifactors_factors(n, max, cancel, factors);
             }
 
             if (n > BigInteger.One)
@@ -95,53 +95,69 @@ namespace MiniCAS.Core.Math
             return factors.ToArray();
         }
 
-        private static void ifactors_smallPrimes(ref BigInteger n, int max, CancellationToken cancel, List<(BigInteger n, BigInteger i)> factors)
+        private async static Task<BigInteger> ifactors_smallPrimes(BigInteger n, int max, CancellationToken cancel, List<(BigInteger n, BigInteger i)> factors)
         {
             var _n = n;
-            var _factors = (from p in smallprimes.AsParallel().WithCancellation(cancel) where p <= max && (_n % p) == 0 orderby p select p).ToArray();
 
-            foreach (var p in _factors)
+            await Task.Run(() =>
             {
-                do
-                {
-                    cancel.ThrowIfCancellationRequested();
+                var _factors = (from p in smallprimes.AsParallel().WithCancellation(cancel) where p <= max && (_n % p) == 0 orderby p select p).ToArray();
 
-                    factors.Add((_n, p));
-                    _n /= p;
-                } while ((_n % p) == 0);
-            }
-            n = _n;
+                foreach (var p in _factors)
+                {
+                    do
+                    {
+                        cancel.ThrowIfCancellationRequested();
+
+                        factors.Add((_n, p));
+                        _n /= p;
+                    } while ((_n % p) == 0);
+                }
+            });
+
+            return _n;
         }
-        private static void ifactors_factors(ref BigInteger n, BigInteger max, CancellationToken cancel, List<(BigInteger n, BigInteger i)> factors)
+        private async static Task<BigInteger> ifactors_factors(BigInteger n, BigInteger max, CancellationToken cancel, List<(BigInteger n, BigInteger i)> factors)
         {
             var _n = n;
-            var _factors = new ConcurrentBag<BigInteger>();
-            var _po = new ParallelOptions { CancellationToken = cancel };
 
-            Parallel.For(0, 2, _po, i =>
-               {
-                   var seed = 1001 + 2 * i;
-
-                   for (var j = seed; j < max; j += 6)
-                       if ((_n % j) == 0)
-                           _factors.Add(j);
-               });
-
-            var _factors2 = _factors.ToArray();
-
-            Array.Sort(_factors2);
-
-            foreach (var p in _factors2)
+            await Task.Run(() =>
             {
-                do
-                {
-                    cancel.ThrowIfCancellationRequested();
+                var _factors = new ConcurrentBag<BigInteger>();
+                var _po = new ParallelOptions { CancellationToken = cancel };
 
-                    factors.Add((_n, p));
-                    _n /= p;
-                } while ((_n % p) == 0);
-            }
-            n = _n;
+                Parallel.For(0, 2, _po, i =>
+                   {
+                       var seed = 1001 + 2 * i;
+                       var __n = _n;
+
+                       for (var j = seed; j < max; j += 6)
+                           if ((__n % j) == 0)
+                           {
+                               _factors.Add(j);
+                               __n /= j;
+                               if (__n < j)
+                                   break;
+                           }
+                   });
+
+                var _factors2 = _factors.ToArray();
+
+                Array.Sort(_factors2);
+
+                foreach (var p in _factors2)
+                {
+                    do
+                    {
+                        cancel.ThrowIfCancellationRequested();
+
+                        factors.Add((_n, p));
+                        _n /= p;
+                    } while ((_n % p) == 0);
+                }
+            });
+
+            return _n;
         }
     }
 }

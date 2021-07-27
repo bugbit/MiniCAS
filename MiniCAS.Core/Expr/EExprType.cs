@@ -40,6 +40,8 @@ namespace MiniCAS.Core.Expr
 
     public enum EAlgExprType
     {
-        Number
+        Number,
+        Term,
+        Pow
     }
 }

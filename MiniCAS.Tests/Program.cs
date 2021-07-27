@@ -139,7 +139,7 @@ namespace MiniCAS.Tests
             }
         }
 
-        [Test]
+        //[Test]
         static async Task ParserTest()
         {
             var texts = new[]
@@ -199,8 +199,8 @@ namespace MiniCAS.Tests
             }
         }
 
-        //[Test]
-        static void BigIntegerIFactorsTest()
+        [Test]
+        static async Task BigIntegerIFactorsTest()
         {
             var numbers = new BigInteger[]
             {
@@ -216,7 +216,7 @@ namespace MiniCAS.Tests
                 try
                 {
                     var stopwatch = Stopwatch.StartNew();
-                    var factors = Ifactors(n, CancellationToken.None);
+                    var factors = await Ifactors(n, CancellationToken.None);
 
                     stopwatch.Stop();
 

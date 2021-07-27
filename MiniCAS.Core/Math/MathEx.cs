@@ -32,6 +32,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Numerics;
 using System.Globalization;
+using System.Threading;
 
 namespace MiniCAS.Core.Math
 {
@@ -46,10 +47,10 @@ namespace MiniCAS.Core.Math
 
         public static BigDecimal Round(BigDecimal n, int numdec) => n.Round(numdec);
         public static decimal Round(decimal n, int numdec) => decimal.Round(n, numdec);
-        
+
         // Source: http://mjs5.com/2016/01/20/c-biginteger-square-root-function/  Michael Steiner, Jan 2016
         // Slightly modified to correct error below 6. (thank you M Ktsis D) 
-        public static BigInteger Sqrt(BigInteger number)
+        public static BigInteger Sqrt(BigInteger number, CancellationToken cancel)
         {
             if (number < 9)
             {
@@ -67,6 +68,7 @@ namespace MiniCAS.Core.Math
 
             while (high > low + 1)
             {
+                cancel.ThrowIfCancellationRequested();
                 n = (high + low) >> 1;
                 p = n * n;
                 if (number < p)
@@ -84,5 +86,7 @@ namespace MiniCAS.Core.Math
             }
             return number == p ? n : low;
         }
+
+        public static Task<BigInteger> SqrtAsync(BigInteger number, CancellationToken cancel) => Task.Run(() => Sqrt(number, cancel));
     }
 }

@@ -37,6 +37,7 @@ namespace MiniCAS.Core.Expr
     public partial class Expr
     {
         public Expr Simply() => null;
+        public Expr SimplyOrExpr(Func<Expr, Expr> simply, Expr e) => simply(e) ?? e;
         //public BigInteger SimplyToInteger()
         //{
         //    var expr = Simply();
@@ -46,5 +47,45 @@ namespace MiniCAS.Core.Expr
 
         //    return exprn.ValueAsInteger;
         //}
+    }
+
+    public partial class AlgExpr
+    {
+        public virtual AlgExpr SimpyEqualsExprsToPow() => null;
+    }
+
+    public partial class TermExpr
+    {
+        public override AlgExpr SimpyEqualsExprsToPow()
+        {
+            var done = false;
+            var exprs = Exprs.ToList();
+
+            for (var i = 0; i < exprs.Count; i++)
+            {
+                var e1 = exprs[i];
+                var exp = 1;
+
+                for (var j = i + 1; j < exprs.Count;)
+                {
+                    var e2 = exprs[j];
+
+                    if (e1 == e2)
+                    {
+                        exp++;
+                        exprs.RemoveAt(j);
+                    }
+                    else
+                        j++;
+                }
+                if (exp > 1)
+                {
+                    done = true;
+                    exprs[i] = MakePow(e1, exp);
+                }
+            }
+
+            return !done ? null : MakeTerm(Sign, exprs);
+        }
     }
 }

@@ -27,32 +27,31 @@ SOFTWARE.
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace MiniCAS.Core.Expr
 {
-    public record Function(string name, string DefinitionRes, Func<Expr[], CancellationToken, Task<Expr>> Calc, int? NumParamMin = null, int? NumParamMax = null)
+    [DebuggerDisplay("TypeExpr : {TypeExpr} AlgExprType : {AlgExprType} Sign : {Sign} {DebugView}")]
+    public partial class TermExpr : AlgExpr
     {
-        public static void VerifNumParams(int numP, int? min = null, int? max = null)
+        // Devuelve:
+        //     A number that indicates the sign of the System.Numerics.BigInteger object, as
+        //     shown in the following table.
+        //     Number – Description
+        //     -1 – The value of this object is negative.
+        //     0 – The value of this object is 0 (zero).
+        //     1 – The value of this object is positive.
+        public int Sign { get; }
+        public ImmutableArray<AlgExpr> Exprs { get; }
+
+        public TermExpr(int sign, IEnumerable<AlgExpr> exprs) : base(EAlgExprType.Term)
         {
-            var pMsg = string.Empty;
-
-            if (min.HasValue && max.HasValue && min == max && numP != max)
-                pMsg += string.Format(Properties.Resources.NumParamsException, max);
-            else
-            {
-                if (min.HasValue && numP < min.Value)
-                    pMsg += string.Format(Properties.Resources.MinNumParamsException, min);
-                if (max.HasValue && numP > max.Value)
-                    pMsg += string.Format(Properties.Resources.MaxNumParamsException, max);
-            }
-
-            if (!string.IsNullOrEmpty(pMsg))
-                throw new ExprException(pMsg);
+            Sign = sign;
+            Exprs = exprs.ToImmutableArray();
         }
-        public void VerifNumParams(int numP) => VerifNumParams(numP, NumParamMin, NumParamMax);
     }
 }

@@ -98,4 +98,68 @@ namespace MiniCAS.Core.Expr
             return latex;
         }
     }
+
+    public partial class TermExpr
+    {
+        public static bool IsImplicitSimbol(Expr e1, Expr e2) => !e1.IsNumberExpr(out NumberExpr n1) || !e2.IsNumberExpr(out NumberExpr n2);
+
+        public override string ToString()
+        {
+            if (Exprs.Length <= 0)
+                return string.Empty;
+
+            var e1 = Exprs.First();
+            var str = (Sign == -1) ? "-" : "";
+
+            str += e1.ToString();
+
+            foreach (var e in Exprs.Skip(1))
+            {
+                if (NeedsParentheses(e1, e))
+                    str += $"({e})";
+                else if (!IsImplicitSimbol(e1, e))
+                    str += $"*{e}";
+                else
+                    str += e;
+                e1 = e;
+            }
+
+            return str;
+        }
+
+        public override LaTex ToLatex()
+        {
+            var latex = base.ToLatex();
+
+            if (Exprs.Length <= 0)
+                return latex;
+
+            var e1 = Exprs.First();
+
+            if (Sign == -1)
+                latex.Append("-");
+
+            latex.Append(e1);
+
+            foreach (var e in Exprs.Skip(1))
+            {
+                if (NeedsParentheses(e1, e))
+                    latex.Append("(").Append(e).Append(")");
+                else if (!IsImplicitSimbol(e1, e))
+                    latex.Append("*").Append(e);
+                else
+                    latex.Append(e);
+                e1 = e;
+            }
+
+            return latex;
+        }
+    }
+
+    public partial class PowExpr
+    {
+        public override string ToString() => $"{Base}^{ToStringParenthesesIfNeeds(Base, Exp)}";
+
+        public override LaTex ToLatex() => base.ToLatex().AppendBrackets(Base).Append("^").AppendBrackets(Exp);
+    }
 }

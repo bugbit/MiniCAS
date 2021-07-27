@@ -135,6 +135,9 @@
   <data name="NoExpressionInteger" xml:space="preserve">
     <value>'{0}' no es un entero</value>
   </data>
+  <data name="NoIntegerException" xml:space="preserve">
+    <value>'{0}' no es un entero</value>
+  </data>
   <data name="NoRecognizeStError" xml:space="preserve">
     <value>No reconozco '{0}'</value>
   </data>

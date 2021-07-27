@@ -115,6 +115,15 @@ namespace MiniCAS.Core.Properties {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a &apos;{0}&apos; not is integer.
+        /// </summary>
+        internal static string NoIntegerException {
+            get {
+                return ResourceManager.GetString("NoIntegerException", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a I don&apos;t recognize &apos;{0}&apos;.
         /// </summary>
         internal static string NoRecognizeStError {

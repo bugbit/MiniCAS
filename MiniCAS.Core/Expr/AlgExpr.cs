@@ -35,7 +35,7 @@ using System.Threading.Tasks;
 namespace MiniCAS.Core.Expr
 {
     [DebuggerDisplay("TypeExpr : {TypeExpr} AlgExprType : {AlgExprType} {DebugView}")]
-    public class AlgExpr : Expr
+    public partial class AlgExpr : Expr
     {
         public EAlgExprType AlgExprType { get; }
 
@@ -43,5 +43,14 @@ namespace MiniCAS.Core.Expr
         {
             AlgExprType = _algtype;
         }
+
+        public override int GetOperatorPrecedence() =>
+            AlgExprType switch
+            {
+                EAlgExprType.Number => 6,
+                EAlgExprType.Pow => 5,
+                EAlgExprType.Term => 3,
+                _ => base.GetOperatorPrecedence()
+            };
     }
 }

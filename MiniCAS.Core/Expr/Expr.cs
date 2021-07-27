@@ -40,6 +40,9 @@ namespace MiniCAS.Core.Expr
     [DebuggerDisplay("TypeExpr : {TypeExpr} {DebugView}")]
     public partial class Expr
     {
+        public static readonly NumberIntegerExpr One = MakeNumber(BigInteger.One);
+        public static readonly NumberIntegerExpr Zero = MakeNumber(BigInteger.Zero);
+
         public EExprType TypeExpr { get; }
 
         protected Expr(EExprType _type)
@@ -56,10 +59,55 @@ namespace MiniCAS.Core.Expr
             return false;
         }
 
+        public virtual int GetOperatorPrecedence() => 0;
+
+        public NumberExpr VerifIsNumberExpr()
+        {
+            if (!IsNumberExpr(out NumberExpr n) || !n.IsZ)
+                throw new ExprException(string.Format(Properties.Resources.NoIntegerException, this));
+
+            return n;
+        }
+
+        public static bool NeedsParentheses(Expr parent, Expr e)
+        {
+            if (e == null)
+                return false;
+
+            var pPre = e.GetOperatorPrecedence();
+            var pPre2 = parent.GetOperatorPrecedence();
+
+            return pPre < pPre2;
+        }
+
+        public static string ToStringParenthesesIfNeeds(Expr parent, Expr e)
+        {
+            var str = "";
+            var pNeeds = NeedsParentheses(parent, e);
+
+            if (pNeeds)
+                str += "(";
+            str += e.ToString();
+            if (pNeeds)
+                str += ")";
+
+            return str;
+        }
+
         public static TokenExpr MakeToken(Syntax.Token n) => new(n);
         public static NumberIntegerExpr MakeNumber(BigInteger n) => new(n);
         public static NumberExpr MakeNumber(BigDecimal n) => (IsInteger(n)) ? new NumberIntegerExpr((BigInteger)n) : new NumberRealExpr(n);
         public static NumberExpr MakeNumber(decimal n) => (IsInteger(n)) ? new NumberIntegerExpr((BigInteger)n) : new NumberDecimalExpr(n);
         public static FunctionExpr MakeFunction(Function f, ICollection<Expr> _params) => new(f, _params);
+        public static AlgExpr MakeTerm(int sign, ICollection<AlgExpr> exprs)
+        {
+            if (sign == 1 && exprs.Count == 1)
+                return exprs.First();
+
+            return new TermExpr(sign, exprs);
+        }
+
+        public static AlgExpr MakePow(AlgExpr _base, AlgExpr _exp) => PowExpr.SimplyPow(_base, _exp) ?? new PowExpr(_base, _exp);
+        public static AlgExpr MakePow(AlgExpr _base, BigInteger _exp) => MakePow(_base, MakeNumber(_exp));
     }
 }

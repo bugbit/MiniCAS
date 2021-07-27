@@ -27,32 +27,25 @@ SOFTWARE.
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace MiniCAS.Core.Expr
 {
-    public record Function(string name, string DefinitionRes, Func<Expr[], CancellationToken, Task<Expr>> Calc, int? NumParamMin = null, int? NumParamMax = null)
+    [DebuggerDisplay("TypeExpr : {TypeExpr} AlgExprType : {AlgExprType} Base : {Base} Exp : {Exp} {DebugView}")]
+    public partial class PowExpr : AlgExpr
     {
-        public static void VerifNumParams(int numP, int? min = null, int? max = null)
+        public AlgExpr Base { get; set; }
+        public AlgExpr Exp { get; set; }
+        public PowExpr(AlgExpr _base, AlgExpr _exp) : base(EAlgExprType.Pow)
         {
-            var pMsg = string.Empty;
-
-            if (min.HasValue && max.HasValue && min == max && numP != max)
-                pMsg += string.Format(Properties.Resources.NumParamsException, max);
-            else
-            {
-                if (min.HasValue && numP < min.Value)
-                    pMsg += string.Format(Properties.Resources.MinNumParamsException, min);
-                if (max.HasValue && numP > max.Value)
-                    pMsg += string.Format(Properties.Resources.MaxNumParamsException, max);
-            }
-
-            if (!string.IsNullOrEmpty(pMsg))
-                throw new ExprException(pMsg);
+            Base = _base;
+            Exp = _exp;
         }
-        public void VerifNumParams(int numP) => VerifNumParams(numP, NumParamMin, NumParamMax);
+
+        public static AlgExpr SimplyPow(AlgExpr _base, AlgExpr _exp) => (_exp == One) ? _base : (_exp == Zero) ? One : null;
+        public AlgExpr SimplyPow() => SimplyPow(Base, Exp);
     }
 }

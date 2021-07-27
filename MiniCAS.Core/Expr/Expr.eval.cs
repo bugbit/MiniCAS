@@ -25,6 +25,7 @@ SOFTWARE.
  */
 #endregion
 
+using MiniCAS.Core.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -48,16 +49,26 @@ namespace MiniCAS.Core.Expr
             return r;
         }
 
-        public static Task<Expr> IFactors(Expr[] _params, CancellationToken token)
+        public async static Task<Expr> IFactors(Expr[] _params, CancellationToken token)
         {
             Function.VerifNumParams(_params.Length, 1, 1);
 
-            if (!_params[0].IsNumberExpr(out NumberExpr n) || !n.IsZ)
-                throw new ExprException();
+            var e1 = _params[0];
+            var n = e1.VerifIsNumberExpr();
+            var ret = await Ifactors(n.ValueAsInteger, token);
+            var exprs = new List<Expr>();
 
-            //await Ifactors(n.ValueAsInteger, token);
+            exprs.AddIfNotEmpyOrNotEqualsEnd(e1);
 
-            return null;
+            var e2 = MakeTerm(1, ret.Select(f => MakeNumber(f.i)).ToArray());
+
+            exprs.AddIfNotEmpyOrNotEqualsEnd(e2);
+
+            var e3 = e2.SimpyEqualsExprsToPow();
+
+            exprs.AddIfNotEmpyOrNotEqualsEnd(e3);
+
+            return exprs.Last();
         }
     }
 

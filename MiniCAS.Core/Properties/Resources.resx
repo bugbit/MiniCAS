@@ -135,6 +135,9 @@
   <data name="NoExpressionInteger" xml:space="preserve">
     <value>'{0}' is not integer.</value>
   </data>
+  <data name="NoIntegerException" xml:space="preserve">
+    <value>'{0}' not is integer</value>
+  </data>
   <data name="NoRecognizeStError" xml:space="preserve">
     <value>I don't recognize '{0}'</value>
   </data>
