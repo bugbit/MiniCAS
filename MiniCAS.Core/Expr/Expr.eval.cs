@@ -32,7 +32,11 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using MiniCAS.Core.Output;
+
 using static MiniCAS.Core.Math.MathEx;
+using System.Numerics;
+using System.Collections;
 
 namespace MiniCAS.Core.Expr
 {
@@ -56,9 +60,9 @@ namespace MiniCAS.Core.Expr
             var e1 = _params[0];
             var n = e1.VerifIsNumberExpr();
             var ret = await Ifactors(n.ValueAsInteger, token);
-            var exprs = new List<Expr>();
+            var exprs = new List<AlgExpr>();
 
-            exprs.AddIfNotEmpyOrNotEqualsEnd(e1);
+            exprs.AddIfNotEmpyOrNotEqualsEnd(n);
 
             var e2 = MakeTerm(1, ret.Select(f => MakeNumber(f.i)).ToArray());
 
@@ -68,7 +72,35 @@ namespace MiniCAS.Core.Expr
 
             exprs.AddIfNotEmpyOrNotEqualsEnd(e3);
 
-            return exprs.Last();
+            var explain = new ArrayList(new object[] { "Realizar divisiones entre sus divisores primos hasta que obtengamos un uno en el cociente.", await IFactorsTable(ret, token) });
+
+            if (exprs.Count > 1)
+                explain.Add(MakeSimplyExprs(exprs));
+
+            return MakeResult(exprs.Last(), explain);
+        }
+
+        public static async Task<LaTex> IFactorsTable((BigInteger n, BigInteger i)[] Ifactors, CancellationToken token)
+        {
+            return await Task.Run
+            (
+                () =>
+                {
+                    var latex = new LaTex();
+
+                    latex.AppendBeginArray();
+                    latex.Append("{r|r}");
+
+                    foreach (var r in Ifactors)
+                    {
+                        latex.AppendRowArray(r.n, r.i);
+                    }
+                    latex.AppendRowArray(1);
+                    latex.AppendEndArray();
+
+                    return latex;
+                }, token
+            );
         }
     }
 

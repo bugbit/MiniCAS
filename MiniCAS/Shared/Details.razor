@@ -1,0 +1,14 @@
+﻿@using System.Collections;
+
+@if (DetailsList != null)
+{
+    @foreach (var detail in DetailsList)
+    {
+        <div><DetailItem Item=@detail /></div>
+    }
+}
+
+@code {
+    [Parameter]
+    public ArrayList DetailsList { get; set; }
+}

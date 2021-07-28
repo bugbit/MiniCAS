@@ -27,22 +27,22 @@ SOFTWARE.
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace MiniCAS.Core.Expr
 {
-    public enum EExprType
+    [DebuggerDisplay("TypeExpr : {TypeExpr} AlgExprType : {AlgExprType} {DebugView}")]
+    public partial class SimplyExprs : AlgExpr
     {
-        Null, AlgExpr, Token, Function, Result
-    }
+        public SimplyExprs(IEnumerable<AlgExpr> exprs) : base(EAlgExprType.SimplyExprs)
+        {
+            Exprs = exprs.ToImmutableArray();
+        }
 
-    public enum EAlgExprType
-    {
-        Number,
-        Term,
-        Pow,
-        SimplyExprs
+        public ImmutableArray<AlgExpr> Exprs { get; }
     }
 }

@@ -1,5 +1,6 @@
 ﻿@page "/"
 @inject IJSRuntime JsRuntime;
+@inject IStringLocalizer<Properties.Resources> localizer
 @using System.Collections;
 @using System.Diagnostics;
 @using System.Reflection;
@@ -12,7 +13,7 @@
             <div id="output-outer">
                 <div id="output">
                     <div>
-                        @name Versión @version<br />
+                        @name @localizer["Version"] @version<br />
                         @descripcion<br />
                         <a href="https://github.com/bugbit/MiniCAS">https://github.com/bugbit/MiniCAS</a><br />
                         MIT LICENSE
@@ -24,7 +25,7 @@
                         <ol>
                             @foreach (var r in results)
                             {
-                                <li><Result In=@(r._in) Out=@(r._out) Elapsed=@(r.elapsed) oneditIn="result_editIn"></Result></li>
+                                <li><Result In=@(r._in) Out=@(r._out) Details=@(r.details) Elapsed=@(r.elapsed) oneditIn="result_editIn"></Result></li>
                             }
                         </ol>
                     </div>
@@ -165,6 +166,7 @@
         var posErr = (int?)null;
         Expr _in = null;
         Expr _out = null;
+        ArrayList _details = null;
         Stopwatch _stopwatch = null;
         CancellationTokenSource t = null;
 
@@ -181,7 +183,18 @@
             _stopwatch = Stopwatch.StartNew();
 
             _in = await Parser.Parse(expr, t.Token);
-            _out = await _in.EvalAndApprox((showdec) ? numdec : null, t.Token);
+
+            var e = await _in.EvalAndApprox((showdec) ? numdec : null, t.Token);
+
+            if (e is ResultExpr r)
+            {
+                _out = r.Result;
+                if (r.Details != null && r.Details.Count > 0)
+                    _details = r.Details;
+            }
+            else
+                _out = e;
+
             _stopwatch.Stop();
             //await Task.Delay(4000, t.Token);
         }
@@ -213,7 +226,7 @@
         {
             expr_latex = expr = null;
             expr_ok = false;
-            results.Add(new(_in, _out, null, _stopwatch?.Elapsed));
+            results.Add(new(_in, _out, _details, _stopwatch?.Elapsed));
         }
         setFocusExpr = true;
     }

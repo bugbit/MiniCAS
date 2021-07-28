@@ -35,13 +35,13 @@ using System.Threading.Tasks;
 
 namespace MiniCAS.Core.Expr
 {
-    [DebuggerDisplay("TypeExpr : {TypeExpr} AlgExprType : {AlgExprType} {DebugView}")]
+    [DebuggerDisplay("TypeExpr : {TypeExpr} AlgExprType : {AlgExprType} Result: {Result} {DebugView}")]
     public partial class ResultExpr : Expr
     {
         public ResultExpr(Expr r, ArrayList details = null) : base(EExprType.Result)
         {
             Result = r;
-            Details = details;
+            Details = details ?? new ArrayList();
         }
 
         public Expr Result { get; }

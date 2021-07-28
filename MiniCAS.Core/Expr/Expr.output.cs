@@ -83,6 +83,9 @@ namespace MiniCAS.Core.Expr
     {
         public override string ToString()
         {
+            if (Params.Length == 1 && !NeedsParentheses(this, Params[0]))
+                return $"{Function.name} {Params[0]}";
+
             var _params = string.Join<Expr>(',', Params);
 
             return $"{Function.name}({_params})";
@@ -161,5 +164,12 @@ namespace MiniCAS.Core.Expr
         public override string ToString() => $"{Base}^{ToStringParenthesesIfNeeds(Base, Exp)}";
 
         public override LaTex ToLatex() => base.ToLatex().AppendBrackets(Base).Append("^").AppendBrackets(Exp);
+    }
+
+    public partial class SimplyExprs
+    {
+        public override string ToString() => string.Join(" = ", Exprs);
+
+        public override LaTex ToLatex() => base.ToLatex().AppendEquation(Exprs);
     }
 }

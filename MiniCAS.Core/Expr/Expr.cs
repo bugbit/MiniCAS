@@ -34,6 +34,7 @@ using System.Threading.Tasks;
 using System.Numerics;
 
 using static MiniCAS.Core.Math.MathEx;
+using System.Collections;
 
 namespace MiniCAS.Core.Expr
 {
@@ -109,5 +110,9 @@ namespace MiniCAS.Core.Expr
 
         public static AlgExpr MakePow(AlgExpr _base, AlgExpr _exp) => PowExpr.SimplyPow(_base, _exp) ?? new PowExpr(_base, _exp);
         public static AlgExpr MakePow(AlgExpr _base, BigInteger _exp) => MakePow(_base, MakeNumber(_exp));
+
+        public static SimplyExprs MakeSimplyExprs(IEnumerable<AlgExpr> exprs) => new SimplyExprs(exprs);
+
+        public static ResultExpr MakeResult(Expr r, ArrayList details = null) => new ResultExpr(r, details);
     }
 }

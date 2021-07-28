@@ -1,0 +1,19 @@
+﻿@using MiniCAS.Core.Output;
+
+@if (Item is string str)
+{
+    <p>@str</p>
+}
+else @if (Item is LaTex latex)
+{
+<Latex Value=@(latex.ToString())></Latex>
+}
+else @if (Item is IToLatex e)
+{
+<Latex Value=@(e.ToLatex().ToString())></Latex>
+}
+
+@code {
+    [Parameter]
+    public object Item { get; set; }
+}
