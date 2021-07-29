@@ -2,7 +2,7 @@ name: DeployToGitHubPages
 env:
   PUBLISH_DIR: bin/Release/net5.0/publish/wwwroot
 
-# Controls when the action will run
+# Controls when the action will run.
 on:
   push:
     branches: [ master ]
