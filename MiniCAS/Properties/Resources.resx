@@ -120,4 +120,28 @@
   <data name="Version" xml:space="preserve">
     <value>Version</value>
   </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="Calcule" xml:space="preserve">
+    <value>calculate</value>
+  </data>
+  <data name="ShowDecimalsNumber" xml:space="preserve">
+    <value>Show decimal numbers!</value>
+  </data>
+  <data name="STException" xml:space="preserve">
+    <value>{0} in the line {1} {2} column!</value>
+  </data>
+  <data name="Expression" xml:space="preserve">
+    <value>Expression</value>
+  </data>
+  <data name="Result" xml:space="preserve">
+    <value>Result</value>
+  </data>
+  <data name="Elapsed" xml:space="preserve">
+    <value>Elapsed</value>
+  </data>
+  <data name="Details" xml:space="preserve">
+    <value>Details:</value>
+  </data>
 </root>

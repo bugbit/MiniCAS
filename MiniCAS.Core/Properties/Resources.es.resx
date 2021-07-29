@@ -162,4 +162,7 @@
   <data name="TimespanSeconds" xml:space="preserve">
     <value>{0} segundos</value>
   </data>
+  <data name="IFactorsDetail1" xml:space="preserve">
+    <value>Realizar divisiones entre sus divisores primos hasta que obtengamos un uno en el cociente.</value>
+  </data>
 </root>

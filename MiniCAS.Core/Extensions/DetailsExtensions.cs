@@ -26,40 +26,22 @@ SOFTWARE.
 #endregion
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using static MiniCAS.Core.Math.MathEx;
-
-namespace MiniCAS.Core.Expr
+namespace MiniCAS.Core.Extensions
 {
-    public partial class Expr
+    public static class DetailsExtensions
     {
-        public virtual Task<Expr> Approx(int numdec) => Task.FromResult(this);
-    }
-
-    public partial class NumberRealExpr
-    {
-        public override Task<Expr> Approx(int numdec) => Task.FromResult((Expr)MakeNumber(Round(Value, numdec)));
-    }
-
-    public partial class NumberDecimalExpr
-    {
-        public override Task<Expr> Approx(int numdec) => Task.FromResult((Expr)MakeNumber(Round(Value, numdec)));
-    }
-
-    public partial class ResultExpr
-    {
-        public async override Task<Expr> Approx(int numdec)
+        public static void InsertTopDetails(this ArrayList details, ArrayList d)
         {
-            var e = await Result.Approx(numdec);
+            if (d == null || d.Count == 0)
+                return;
 
-            if (e == Result)
-                return Result;
-
-            return MakeResult(e, this);
+            details.InsertRange(0, d);
         }
     }
 }

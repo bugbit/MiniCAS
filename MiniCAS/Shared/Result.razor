@@ -1,9 +1,10 @@
 ﻿@using System.Collections;
 @using MiniCAS.Core.Expr;
 @using MiniCAS.Core.Extensions;
+@inject IStringLocalizer<Properties.Resources> localizer
 
 <div>
-    Expresión&nbsp;
+    @localizer["Expression"]&nbsp;
     @if (oneditIn != null && In != null)
     {
         <button type="button" @onclick="editIn_click">Edit</button>
@@ -16,7 +17,7 @@
     }
 </div>
 <div>
-    Resultado&nbsp;
+    @localizer["Result"]&nbsp;
     @if (oneditOut != null && Out != null)
     {
         <button type="button" @onclick="editOut_click">Edit</button>
@@ -24,7 +25,7 @@
 </div>
 @if (Elapsed.HasValue)
 {
-    <div>Tardó&nbsp;@(Elapsed.Value.ToShortString())</div>
+    <div>@localizer["Elapsed"]&nbsp;@(Elapsed.Value.ToShortString())</div>
 }
 <div>
     @if (Out != null)
@@ -34,7 +35,7 @@
 </div>
 @if (Details != null)
 {
-    <div>Detalles:</div>
+    <div>@localizer["Details"]</div>
     <div><Details DetailsList=Details /></div>
 }
 

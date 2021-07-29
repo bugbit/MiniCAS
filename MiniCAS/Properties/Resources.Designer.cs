@@ -61,6 +61,78 @@ namespace MiniCAS.Properties {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a calculate.
+        /// </summary>
+        internal static string Calcule {
+            get {
+                return ResourceManager.GetString("Calcule", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Cancel.
+        /// </summary>
+        internal static string Cancel {
+            get {
+                return ResourceManager.GetString("Cancel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Details:.
+        /// </summary>
+        internal static string Details {
+            get {
+                return ResourceManager.GetString("Details", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Elapsed.
+        /// </summary>
+        internal static string Elapsed {
+            get {
+                return ResourceManager.GetString("Elapsed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Expression.
+        /// </summary>
+        internal static string Expression {
+            get {
+                return ResourceManager.GetString("Expression", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Result.
+        /// </summary>
+        internal static string Result {
+            get {
+                return ResourceManager.GetString("Result", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Show decimal numbers!.
+        /// </summary>
+        internal static string ShowDecimalsNumber {
+            get {
+                return ResourceManager.GetString("ShowDecimalsNumber", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a {0} in the line {1} {2} column!.
+        /// </summary>
+        internal static string STException {
+            get {
+                return ResourceManager.GetString("STException", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a Version.
         /// </summary>
         internal static string Version {

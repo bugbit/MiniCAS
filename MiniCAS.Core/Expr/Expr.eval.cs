@@ -42,10 +42,10 @@ namespace MiniCAS.Core.Expr
 {
     public partial class Expr
     {
-        public virtual Task<Expr> Eval(CancellationToken token) => Task.FromResult(this);
-        public virtual async Task<Expr> EvalAndApprox(int? numdec, CancellationToken token)
+        public virtual Task<Expr> Eval(CancellationToken cancel) => Task.FromResult(this);
+        public virtual async Task<Expr> EvalAndApprox(int? numdec, CancellationToken cancel)
         {
-            var r = await Eval(token);
+            var r = await Eval(cancel);
 
             if (numdec.HasValue)
                 r = await r.Approx(numdec.Value);
@@ -53,13 +53,13 @@ namespace MiniCAS.Core.Expr
             return r;
         }
 
-        public async static Task<Expr> IFactors(Expr[] _params, CancellationToken token)
+        public async static Task<Expr> IFactors(Expr[] _params, CancellationToken cancel)
         {
             Function.VerifNumParams(_params.Length, 1, 1);
 
             var e1 = _params[0];
             var n = e1.VerifIsNumberExpr();
-            var ret = await Ifactors(n.ValueAsInteger, token);
+            var ret = await Ifactors(n.ValueAsInteger, cancel);
             var exprs = new List<AlgExpr>();
 
             exprs.AddIfNotEmpyOrNotEqualsEnd(n);
@@ -68,11 +68,16 @@ namespace MiniCAS.Core.Expr
 
             exprs.AddIfNotEmpyOrNotEqualsEnd(e2);
 
-            var e3 = e2.SimpyEqualsExprsToPow();
+            var e3 = await e2.SimpyEqualsExprsToPow(cancel);
 
             exprs.AddIfNotEmpyOrNotEqualsEnd(e3);
 
-            var explain = new ArrayList(new object[] { "Realizar divisiones entre sus divisores primos hasta que obtengamos un uno en el cociente.", await IFactorsTable(ret, token) });
+            var explain = new ArrayList(new object[]
+            {
+                //"Realizar divisiones entre sus divisores primos hasta que obtengamos un uno en el cociente."
+                Properties.Resources.IFactorsDetail1,
+                await IFactorsTable(ret, cancel)
+            });
 
             if (exprs.Count > 1)
                 explain.Add(MakeSimplyExprs(exprs));
@@ -80,7 +85,7 @@ namespace MiniCAS.Core.Expr
             return MakeResult(exprs.Last(), explain);
         }
 
-        public static async Task<LaTex> IFactorsTable((BigInteger n, BigInteger i)[] Ifactors, CancellationToken token)
+        public static async Task<LaTex> IFactorsTable((BigInteger n, BigInteger i)[] Ifactors, CancellationToken cancel)
         {
             return await Task.Run
             (
@@ -93,13 +98,14 @@ namespace MiniCAS.Core.Expr
 
                     foreach (var r in Ifactors)
                     {
+                        cancel.ThrowIfCancellationRequested();
                         latex.AppendRowArray(r.n, r.i);
                     }
                     latex.AppendRowArray(1);
                     latex.AppendEndArray();
 
                     return latex;
-                }, token
+                }, cancel
             );
         }
     }

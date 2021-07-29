@@ -35,6 +35,7 @@ using System.Numerics;
 
 using static MiniCAS.Core.Math.MathEx;
 using System.Collections;
+using MiniCAS.Core.Extensions;
 
 namespace MiniCAS.Core.Expr
 {
@@ -114,5 +115,14 @@ namespace MiniCAS.Core.Expr
         public static SimplyExprs MakeSimplyExprs(IEnumerable<AlgExpr> exprs) => new SimplyExprs(exprs);
 
         public static ResultExpr MakeResult(Expr r, ArrayList details = null) => new ResultExpr(r, details);
+        public static ResultExpr MakeResult(Expr r, ResultExpr eparent)
+        {
+            if (r is ResultExpr r1)
+                r1.Details.InsertTopDetails(eparent.Details);
+            else
+                r1 = MakeResult(r, eparent.Details);
+
+            return r1;
+        }
     }
 }

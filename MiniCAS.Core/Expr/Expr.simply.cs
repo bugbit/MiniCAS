@@ -30,6 +30,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace MiniCAS.Core.Expr
@@ -51,41 +52,43 @@ namespace MiniCAS.Core.Expr
 
     public partial class AlgExpr
     {
-        public virtual AlgExpr SimpyEqualsExprsToPow() => null;
+        public virtual Task<AlgExpr> SimpyEqualsExprsToPow(CancellationToken cancel) => Task.FromResult((AlgExpr)null);
     }
 
     public partial class TermExpr
     {
-        public override AlgExpr SimpyEqualsExprsToPow()
-        {
-            var done = false;
-            var exprs = Exprs.ToList();
-
-            for (var i = 0; i < exprs.Count; i++)
+        public async override Task<AlgExpr> SimpyEqualsExprsToPow(CancellationToken cancel)
+            => await Task.Run(() =>
             {
-                var e1 = exprs[i];
-                var exp = 1;
+                var done = false;
+                var exprs = Exprs.ToList();
 
-                for (var j = i + 1; j < exprs.Count;)
+                for (var i = 0; i < exprs.Count; i++)
                 {
-                    var e2 = exprs[j];
+                    var e1 = exprs[i];
+                    var exp = 1;
 
-                    if (e1 == e2)
+                    for (var j = i + 1; j < exprs.Count;)
                     {
-                        exp++;
-                        exprs.RemoveAt(j);
-                    }
-                    else
-                        j++;
-                }
-                if (exp > 1)
-                {
-                    done = true;
-                    exprs[i] = MakePow(e1, exp);
-                }
-            }
+                        var e2 = exprs[j];
 
-            return !done ? null : MakeTerm(Sign, exprs);
-        }
+                        cancel.ThrowIfCancellationRequested();
+                        if (e1 == e2)
+                        {
+                            exp++;
+                            exprs.RemoveAt(j);
+                        }
+                        else
+                            j++;
+                    }
+                    if (exp > 1)
+                    {
+                        done = true;
+                        exprs[i] = MakePow(e1, exp);
+                    }
+                }
+
+                return !done ? null : MakeTerm(Sign, exprs);
+            }, cancel);
     }
 }

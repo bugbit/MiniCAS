@@ -165,4 +165,7 @@
   <data name="TimespanSeconds" xml:space="preserve">
     <value>{0} seconds</value>
   </data>
+  <data name="IFactorsDetail1" xml:space="preserve">
+    <value>Perform divisions between their prime divisors until we get a one in the quotient.</value>
+  </data>
 </root>

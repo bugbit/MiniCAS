@@ -1,12 +1,13 @@
 ﻿@page "/"
-@inject IJSRuntime JsRuntime;
-@inject IStringLocalizer<Properties.Resources> localizer
 @using System.Collections;
 @using System.Diagnostics;
 @using System.Reflection;
 @using System.Threading;
 @using MiniCAS.Core.Syntax;
 @using MiniCAS.Core.Expr;
+@inject IJSRuntime JsRuntime;
+@inject IStringLocalizer<Properties.Resources> localizer
+
 <form @onsubmit="submit">
     <div id="outer-screen">
         <div id="inner-screen">
@@ -53,10 +54,10 @@
                 <div>
                     <div id="cmds">
                         <div class="cmds-elem">
-                            <input class="btn btn-secondary" type="button" value="cancelar" disabled=@(!calculating && expr_ok ) @onclick="cancel_click" />
+                            <input class="btn btn-secondary" type="button" value="@localizer["Cancel"]" disabled=@(!calculating && expr_ok ) @onclick="cancel_click" />
                         </div>
                         <div class="cmds-elem">
-                            <input class="btn btn-primary" type="submit" value="calcular" disabled=@(calculating || !expr_ok ) />
+                            <input class="btn btn-primary" type="submit" value="@localizer["Calcule"]" disabled=@(calculating || !expr_ok ) />
                         </div>
                         @if (showdec)
                         {
@@ -66,7 +67,7 @@
                         }
                         <div class="cmds-elem">
                             <input id="chkshowdec" type="checkbox" class="form-check-input" checked=@showdec @onchange=@(e => showdec = (bool)e.Value) disabled=@calculating />
-                            <label for="chkshowdec" class="form-check-label">Mostrar números decimales</label>
+                            <label for="chkshowdec" class="form-check-label">@localizer["ShowDecimalsNumber"]</label>
                         </div>
                     </div>
                 </div>
@@ -204,7 +205,7 @@
         catch (STException ex)
         {
             showError = true;
-            errorStr = string.Format("{0} en la línea {1} columna {2}", ex.Message, ex.Line, ex.Column);
+            errorStr = string.Format(localizer["STException"], ex.Message, ex.Line, ex.Column);
             posErr = ex.Position;
         }
         catch (Exception ex)

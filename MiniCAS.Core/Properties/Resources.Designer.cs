@@ -79,6 +79,15 @@ namespace MiniCAS.Core.Properties {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a Perform divisions between their prime divisors until we get a one in the quotient..
+        /// </summary>
+        internal static string IFactorsDetail1 {
+            get {
+                return ResourceManager.GetString("IFactorsDetail1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a Expected {0} max params.
         /// </summary>
         internal static string MaxNumParamsException {
