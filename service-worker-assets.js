@@ -289,7 +289,7 @@
       "url": "_framework\/System.Private.CoreLib.dll"
     },
     {
-      "hash": "sha256-so57fVr4pfNFqElFhNYCDZApq510qOFmMj2I\/mbvHsE=",
+      "hash": "sha256-XOLV0Aj87nss1SJE4mH7qhR9fC8swItc+jPQCB2yv5U=",
       "url": "_framework\/es\/MiniCAS.resources.dll"
     },
     {
@@ -297,7 +297,7 @@
       "url": "_framework\/es\/MiniCAS.Core.resources.dll"
     },
     {
-      "hash": "sha256-su4KJq1XbsDVxiRCJLEyyVof8Oam6mIujhT97X1675A=",
+      "hash": "sha256-1IzSDttHJOmmsB2kz53m\/Qg\/JLYz3AiV8bTE7j1q8kA=",
       "url": "_framework\/blazor.boot.json"
     },
     {
@@ -305,5 +305,5 @@
       "url": "_framework\/blazor.webassembly.js"
     }
   ],
-  "version": "T0JsErc9"
+  "version": "QJ47K+Ni"
 };
