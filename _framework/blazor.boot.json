@@ -24,8 +24,8 @@
       "Microsoft.JSInterop.dll": "sha256-zP6zXDfpzJjo1zomVRqtKqHlFFHaMMnNeFco0C83a58=",
       "Microsoft.JSInterop.WebAssembly.dll": "sha256-421zIgHVXw1yI4x0B5ZA\/fW+I63Upuw5ZddGvWp4FSw=",
       "System.IO.Pipelines.dll": "sha256-o\/PdJLBGKSgIYSBLq6l+GUStgsQ7K0l+eLIHhkVU1o0=",
-      "MiniCAS.Core.dll": "sha256-sDxnDrGZcMyNM\/odoHg0rCUGizpR3XzbP5JpqVc2Reg=",
-      "MiniCAS.dll": "sha256-Wekm\/VabavZjGDPHQ\/ZHB4woapCI\/oweEa7fzlnvkQw=",
+      "MiniCAS.Core.dll": "sha256-1GFIulMjmSikkjcrb19gpvj6BUKjpN6jCehz9QCxNmU=",
+      "MiniCAS.dll": "sha256-7LEoZok8QB83ClVjlP2MtCcDwXylRlzApnaRrYHiUwA=",
       "System.Collections.Concurrent.dll": "sha256-v1qkbmqvZXMLup12HDnTew3Q03nhVdlvuc8Lj6VT6ag=",
       "System.Collections.Immutable.dll": "sha256-t+K7J0K++UVpqbGkx0KG9uEyzBVAche+ip8p62ust0I=",
       "System.Collections.NonGeneric.dll": "sha256-EF0UREDcwoJKEdQbJNf6TXjVtyH3wfxLKlLTeuzU8Ks=",
@@ -67,8 +67,8 @@
     },
     "satelliteResources": {
       "es": {
-        "es\/MiniCAS.resources.dll": "sha256-Gt96cSiEbqd9aslhmSZisL5FfXl5nAcmo+nu4yYJrIE=",
-        "es\/MiniCAS.Core.resources.dll": "sha256-vVNysdyk+pghwc1oMu6TcIx29mg1MyoNiKjNJp+u014="
+        "es\/MiniCAS.resources.dll": "sha256-KY1HQaAJrLABg09XmjZEWv5EHliqb\/LMn482uwDcf3c=",
+        "es\/MiniCAS.Core.resources.dll": "sha256-J\/rUY\/qvWihWUYKguPkyVOiXhEqUhADrfXAjqQb+iHI="
       }
     }
   }
