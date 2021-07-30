@@ -173,7 +173,7 @@
       "url": "_framework\/System.IO.Pipelines.dll"
     },
     {
-      "hash": "sha256-1GFIulMjmSikkjcrb19gpvj6BUKjpN6jCehz9QCxNmU=",
+      "hash": "sha256-VzbjXF0TgQENQWPT7vLAvsCSzwlTlKy26hzho9mOdI4=",
       "url": "_framework\/MiniCAS.Core.dll"
     },
     {
@@ -221,7 +221,7 @@
       "url": "_framework\/System.Linq.Parallel.dll"
     },
     {
-      "hash": "sha256-AmKD98jh1Dxv5AZGezeA+N9DxIf37ycaWzK2f48UUP0=",
+      "hash": "sha256-n2Qt8fJRUZ5qfgbHP0M77EjNhx+dQWz9bEnwqzeAzkU=",
       "url": "_framework\/System.Linq.dll"
     },
     {
@@ -297,7 +297,7 @@
       "url": "_framework\/es\/MiniCAS.Core.resources.dll"
     },
     {
-      "hash": "sha256-h2NEftJEjZzpL4nGJstNgWYrKAFi9kS+jDBwl6xbX6k=",
+      "hash": "sha256-9IHHS9ijEdt0D9aV4ZxyV+vDG9nsxE5L2ipSNCo3CCc=",
       "url": "_framework\/blazor.boot.json"
     },
     {
@@ -305,5 +305,5 @@
       "url": "_framework\/blazor.webassembly.js"
     }
   ],
-  "version": "dqGkAjpu"
+  "version": "TCg1TkWd"
 };
