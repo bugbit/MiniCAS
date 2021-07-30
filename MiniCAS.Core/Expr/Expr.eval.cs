@@ -58,31 +58,19 @@ namespace MiniCAS.Core.Expr
             Function.VerifNumParams(_params.Length, 1, 1);
 
             var e1 = _params[0];
-            var n = e1.VerifIsNumberExpr();
-            var ret = await Ifactors(n.ValueAsInteger, cancel);
-            var exprs = new List<AlgExpr>();
 
-            exprs.AddIfNotEmpyOrNotEqualsEnd(n);
+            return (await IFactorsInternal(e1, cancel)).expr;
+        }
 
-            var e2 = MakeTerm(1, ret.Select(f => MakeNumber(f.i)).ToArray());
+        public async static Task<Expr> IFGcd(Expr[] _params, CancellationToken cancel)
+        {
+            Function.VerifNumParams(_params.Length, 2);
 
-            exprs.AddIfNotEmpyOrNotEqualsEnd(e2);
+            var pTaskCalcs = from p in _params.AsParallel().WithCancellation(cancel) select IFactorsInternal(p, cancel);
+            var pCalcs = await Task.WhenAll(pTaskCalcs);
+            //var pDetails = new ArrayList(from c in pCalcs select c.expr.Details);
 
-            var e3 = await e2.SimpyEqualsExprsToPow(cancel);
-
-            exprs.AddIfNotEmpyOrNotEqualsEnd(e3);
-
-            var explain = new ArrayList(new object[]
-            {
-                //"Realizar divisiones entre sus divisores primos hasta que obtengamos un uno en el cociente."
-                Properties.Resources.IFactorsDetail1,
-                await IFactorsTable(ret, cancel)
-            });
-
-            if (exprs.Count > 1)
-                explain.Add(MakeSimplyExprs(exprs));
-
-            return MakeResult(exprs.Last(), explain);
+            return null;
         }
 
         public static async Task<LaTex> IFactorsTable((BigInteger n, BigInteger i)[] Ifactors, CancellationToken cancel)
@@ -107,6 +95,35 @@ namespace MiniCAS.Core.Expr
                     return latex;
                 }, cancel
             );
+        }
+
+        private async static Task<((BigInteger n, BigInteger i)[] rifactors, ResultExpr expr)> IFactorsInternal(Expr e, CancellationToken cancel)
+        {
+            var n = e.VerifIsNumberExpr();
+            var ret = await Ifactors(n.ValueAsInteger, cancel);
+            var exprs = new List<AlgExpr>();
+
+            exprs.AddIfNotEmpyOrNotEqualsEnd(n);
+
+            var e2 = MakeTerm(1, ret.Select(f => MakeNumber(f.i)).ToArray());
+
+            exprs.AddIfNotEmpyOrNotEqualsEnd(e2);
+
+            var e3 = await e2.SimpyEqualsExprsToPow(cancel);
+
+            exprs.AddIfNotEmpyOrNotEqualsEnd(e3);
+
+            var explain = new ArrayList(new object[]
+            {
+                //"Realizar divisiones entre sus divisores primos hasta que obtengamos un uno en el cociente."
+                Properties.Resources.IFactorsDetail1,
+                await IFactorsTable(ret, cancel)
+            });
+
+            if (exprs.Count > 1)
+                explain.Add(MakeSimplyExprs(exprs));
+
+            return (ret, MakeResult(exprs.Last(), explain));
         }
     }
 

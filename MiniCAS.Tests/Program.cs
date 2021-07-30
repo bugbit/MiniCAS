@@ -67,7 +67,7 @@ namespace MiniCAS.Tests
         {
             var texts = new[]
             {
-                "   ","   \r\n","   \r\n20","    20","20","2","2.30","-30","aa"
+                "   ","   \r\n","   \r\n20","    20","20","2","2.30","-30","aa","ifactors()","[]","{ 1,2,3 }","ifactors(3,4)"
             };
 
             foreach (var t in texts)
@@ -139,13 +139,14 @@ namespace MiniCAS.Tests
             }
         }
 
-        //[Test]
+        [Test]
         static async Task ParserTest()
         {
             var texts = new[]
             {
                 //"20","2.30","-30","aa","2x"
-                "ifactors","ifactors 3"
+                "ifactors","ifactors 3","ifactors(3)","ifactors(3,4)",
+                "ifgcd 122","ifgcd(3,4)"
             };
 
             foreach (var t in texts)
@@ -199,7 +200,7 @@ namespace MiniCAS.Tests
             }
         }
 
-        [Test]
+        //[Test]
         static async Task BigIntegerIFactorsTest()
         {
             var numbers = new BigInteger[]

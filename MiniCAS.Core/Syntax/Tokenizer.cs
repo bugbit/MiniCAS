@@ -42,8 +42,18 @@ namespace MiniCAS.Core.Syntax
                 (new Regex(@"^[ \f\t\v]+",RegexOptions.Compiled),ETokenType.Spaces,0),
                 (new Regex(@"^[\r\n]+",RegexOptions.Compiled),ETokenType.NewLine,0),
                 (new Regex(@"(?<token>^(\d*\.)?\d+)",RegexOptions.Compiled),ETokenType.Number,0),
+                (new Regex(@"(?<token>^[\(\[\{])",RegexOptions.Compiled),ETokenType.ParenthesisOpen,0),
+                (new Regex(@"(?<token>^[\)\]\}])",RegexOptions.Compiled),ETokenType.ParenthesisClose,0),
+                (new Regex(@"(?<token>^,)",RegexOptions.Compiled),ETokenType.Comma,0),
                 (Expr.Functions.Instance.RegToken,ETokenType.Function,0)
             };
+
+        private static Dictionary<char, char> parenthesisOpenClose = new()
+        {
+            ['('] = ')',
+            ['['] = ']',
+            ['{'] = '}'
+        };
 
         private string text;
 
@@ -82,6 +92,17 @@ namespace MiniCAS.Core.Syntax
         }
 
         public Token ToToken() => new(Position, Line, Column, Token, TokenStr);
+
+        public bool IsParenthesisOk(Token tokenope, Token tokenclose)
+        {
+            if (tokenope.TokenType != ETokenType.ParenthesisOpen || tokenclose.TokenType != ETokenType.ParenthesisClose)
+                return false;
+
+            if (!parenthesisOpenClose.TryGetValue(tokenope.TokenStr[0], out char close))
+                return false;
+
+            return (tokenclose.TokenStr[0] == close);
+        }
 
         private Task ReadTokenAsync(CancellationToken token) => Task.Run(() => ReadToken(token), token);
 

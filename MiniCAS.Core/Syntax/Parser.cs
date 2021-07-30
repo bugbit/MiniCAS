@@ -41,15 +41,15 @@ namespace MiniCAS.Core.Syntax
         private Stack<(Token Operation, List<Expr.Expr> Exprs)> stack;
         private Tokenizer tokenizer;
 
-        public static Task<Expr.Expr> Parse(string expr, CancellationToken token) => new Parser().Parse(expr, false, token);
+        public static Task<Expr.Expr> Parse(string expr, CancellationToken cancel) => new Parser().Parse(expr, false, cancel);
 
-        public static async Task<LaTex> ParseToLatex(string expr, CancellationToken token)
+        public static async Task<LaTex> ParseToLatex(string expr, CancellationToken cancel)
         {
             try
             {
-                var e = await new Parser().Parse(expr, true, token);
+                var e = await new Parser().Parse(expr, true, cancel);
 
-                token.ThrowIfCancellationRequested();
+                cancel.ThrowIfCancellationRequested();
 
                 var latex = e.ToLatex();
 
@@ -61,18 +61,18 @@ namespace MiniCAS.Core.Syntax
             }
         }
 
-        private async Task<Expr.Expr> Parse(string expr, bool argNoThrowEx, CancellationToken token)
+        private async Task<Expr.Expr> Parse(string expr, bool argNoThrowEx, CancellationToken cancel)
         {
             stack = new();
             tokenizer = new(expr);
             while (!tokenizer.EOF)
             {
-                token.ThrowIfCancellationRequested();
+                cancel.ThrowIfCancellationRequested();
 
                 try
                 {
-                    await tokenizer.NextToken(token);
-                    if (!ProcessToken(argNoThrowEx))
+                    await tokenizer.NextToken(cancel);
+                    if (!ProcessToken(argNoThrowEx, cancel))
                         break;
                 }
                 catch
@@ -88,16 +88,19 @@ namespace MiniCAS.Core.Syntax
                 }
             }
 
-            return ProcessAll(token);
+            return ProcessAll(cancel);
         }
 
-        private bool ProcessToken(bool argNoThrowEx)
+        private bool ProcessToken(bool argNoThrowEx, CancellationToken cancel)
         {
+            cancel.ThrowIfCancellationRequested();
+
             if (tokenizer.EOF)
                 return false;
 
             var token = tokenizer.ToToken();
             Expr.Expr expr = null;
+            var newlevel = (stack.Count == 0);
 
             switch (token.TokenType)
             {
@@ -108,6 +111,39 @@ namespace MiniCAS.Core.Syntax
                     break;
                 case ETokenType.Function:
                     break;
+                case ETokenType.ParenthesisOpen:
+                    newlevel = true;
+                    break;
+                case ETokenType.Comma:
+                    if (!ProcessToParenthesisOpen(cancel))
+                    {
+                        if (argNoThrowEx)
+                            expr = Expr.Expr.MakeToken(token);
+                        else
+                            throw new STException(token.Position, token.Line, token.Column, string.Format(Properties.Resources.NoExpectTokenException, token.TokenStr));
+                    }
+                    break;
+                case ETokenType.ParenthesisClose:
+                    if (!ProcessToParenthesisOpen(cancel))
+                    {
+                        if (argNoThrowEx)
+                            expr = Expr.Expr.MakeToken(token);
+                        else
+                            throw new STException(token.Position, token.Line, token.Column, string.Format(Properties.Resources.NoExpectTokenException, token.TokenStr));
+                    }
+                    else
+                    {
+                        PopAndProcess();
+
+                        if (tokenizer.IsParenthesisOk(stack.Peek().Operation, token))
+                        {
+                            if (argNoThrowEx)
+                                expr = Expr.Expr.MakeToken(token);
+                            else
+                                throw new STException(token.Position, token.Line, token.Column, string.Format(Properties.Resources.NoExpectTokenException, token.TokenStr));
+                        }
+                    }
+                    break;
                 default:
                     if (argNoThrowEx)
                         expr = Expr.Expr.MakeToken(token);
@@ -116,7 +152,7 @@ namespace MiniCAS.Core.Syntax
                     break;
             }
 
-            if (stack.Count == 0)
+            if (newlevel)
             {
                 (Token Operation, List<Expr.Expr> Exprs) item = (token, new());
 
@@ -125,13 +161,13 @@ namespace MiniCAS.Core.Syntax
 
                 stack.Push(item);
             }
-            else
-                ProcessExprPeek(expr);
+            else if (expr != null)
+                ProcessExprPeek(new[] { expr });
 
             return expr == null || expr.TypeExpr != Expr.EExprType.Token;
         }
 
-        private Expr.Expr PopAndProcess()
+        private Expr.Expr[] PopAndProcess()
         {
             if (stack.Count == 0)
                 return null;
@@ -139,17 +175,18 @@ namespace MiniCAS.Core.Syntax
             if (!stack.TryPop(out (Token Operation, List<Expr.Expr> Exprs) item))
                 return null;
 
-            Expr.Expr expr;
+            Expr.Expr[] expr;
 
             switch (item.Operation.TokenType)
             {
                 case ETokenType.Number:
-                    expr = item.Exprs[0];
+                case ETokenType.ParenthesisOpen:
+                    expr = item.Exprs.ToArray();
                     break;
                 case ETokenType.Function:
                     var fn = Expr.Functions.Instance.GetFunction(item.Operation.TokenStr);
-                    
-                    expr = Expr.Expr.MakeFunction(fn, item.Exprs);
+
+                    expr = new[] { Expr.Expr.MakeFunction(fn, item.Exprs) };
                     break;
                 default:
                     throw new NotImplementedException();
@@ -159,7 +196,7 @@ namespace MiniCAS.Core.Syntax
             return expr;
         }
 
-        private void ProcessExprPeek(Expr.Expr expr)
+        private void ProcessExprPeek(Expr.Expr[] expr)
         {
             if (!stack.TryPeek(out (Token Operation, List<Expr.Expr> Exprs) item))
                 return;
@@ -169,10 +206,11 @@ namespace MiniCAS.Core.Syntax
             switch (item.Operation.TokenType)
             {
                 case ETokenType.Function:
-                    if (expr == null)
+                case ETokenType.ParenthesisOpen:
+                    if (expr == null || expr.Length == 0)
                         throw new STException(token.Position, token.Line, token.Column, string.Format(Properties.Resources.NoExpectTokenException, token.TokenStr));
 
-                    item.Exprs.Add(expr);
+                    item.Exprs.AddRange(expr);
                     break;
                 default:
                     throw new STException(token.Position, token.Line, token.Column, string.Format(Properties.Resources.NoExpectTokenException, token.TokenStr));
@@ -183,17 +221,28 @@ namespace MiniCAS.Core.Syntax
         {
         }
 
-        private Expr.Expr ProcessAll(CancellationToken token)
+        private bool ProcessToParenthesisOpen(CancellationToken cancel)
         {
-            Expr.Expr expr = null;
+            while (stack.Count > 0 && stack.Peek().Operation.TokenType != ETokenType.ParenthesisOpen)
+            {
+                cancel.ThrowIfCancellationRequested();
+                PopAndProcess();
+            }
+
+            return stack.Count > 0;
+        }
+
+        private Expr.Expr ProcessAll(CancellationToken cancel)
+        {
+            Expr.Expr[] expr = null;
 
             while (stack.Count > 0)
             {
-                token.ThrowIfCancellationRequested();
+                cancel.ThrowIfCancellationRequested();
                 expr = PopAndProcess();
             }
 
-            return expr;
+            return expr?.FirstOrDefault();
         }
     }
 }

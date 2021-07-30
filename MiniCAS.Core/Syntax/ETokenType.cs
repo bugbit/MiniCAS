@@ -35,7 +35,7 @@ namespace MiniCAS.Core.Syntax
 {
     public enum ETokenType
     {
-        Number, Function,
+        Number, Function, ParenthesisOpen, ParenthesisClose, Comma,
         //Internos
         Spaces, NewLine
     }
