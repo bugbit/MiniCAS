@@ -40,7 +40,7 @@ namespace MiniCAS.Core.Expr
         private readonly Dictionary<string, Function> funciones = new Function[]
         {
             new("ifactors","ifactorsDef", Expr.IFactors, 1, 1)
-        }.ToDictionary(f => f.name, f => f);
+        }.ToDictionary(f => f.name, f => f, StringComparer.InvariantCultureIgnoreCase);
         private readonly Lazy<Regex> regToken;
 
         public static Functions Instance => instance.Value;
