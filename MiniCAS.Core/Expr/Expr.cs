@@ -62,6 +62,8 @@ namespace MiniCAS.Core.Expr
         }
 
         public virtual int GetOperatorPrecedence() => 0;
+        public virtual bool ExprStartWithNumber()=>false;
+        public virtual bool ExprEndWithNumber()=>false;
 
         public NumberExpr VerifIsNumberExpr()
         {

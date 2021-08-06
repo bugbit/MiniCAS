@@ -53,6 +53,10 @@ namespace MiniCAS.Core.Expr
 
             return true;
         }
+
+        public override bool ExprStartWithNumber()=>true;
+
+        public override bool ExprEndWithNumber()=>true;
     }
 
     [DebuggerDisplay("TypeExpr : {TypeExpr} AlgExprType : {AlgExprType} IsZ : {IsZ} IsR : {IsR} IsDecimal : {IsDecimal} Value : {Value} {DebugView}")]

@@ -47,5 +47,9 @@ namespace MiniCAS.Core.Expr
 
         public static AlgExpr SimplyPow(AlgExpr _base, AlgExpr _exp) => (_exp == One) ? _base : (_exp == Zero) ? One : null;
         public AlgExpr SimplyPow() => SimplyPow(Base, Exp);
+
+        public override bool ExprStartWithNumber()=>Base.ExprStartWithNumber();
+
+        public override bool ExprEndWithNumber()=>Exp.ExprEndWithNumber();
     }
 }

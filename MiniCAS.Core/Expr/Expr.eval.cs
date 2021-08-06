@@ -59,7 +59,7 @@ namespace MiniCAS.Core.Expr
 
             var e1 = _params[0];
 
-            return (await IFactorsInternal(e1, cancel)).expr;
+            return await IFactorsInternal(e1, cancel);
         }
 
         public async static Task<Expr> IFGcd(Expr[] _params, CancellationToken cancel)
@@ -97,7 +97,7 @@ namespace MiniCAS.Core.Expr
             );
         }
 
-        private async static Task<((BigInteger n, BigInteger i)[] rifactors, ResultExpr expr)> IFactorsInternal(Expr e, CancellationToken cancel)
+        private async static Task<ResultExpr> IFactorsInternal(Expr e, CancellationToken cancel)
         {
             var n = e.VerifIsNumberExpr();
             var ret = await Ifactors(n.ValueAsInteger, cancel);
@@ -123,7 +123,7 @@ namespace MiniCAS.Core.Expr
             if (exprs.Count > 1)
                 explain.Add(MakeSimplyExprs(exprs));
 
-            return (ret, MakeResult(exprs.Last(), explain));
+            return MakeResult(exprs.Last(), explain);
         }
     }
 

@@ -104,7 +104,7 @@ namespace MiniCAS.Core.Expr
 
     public partial class TermExpr
     {
-        public static bool IsImplicitSimbol(Expr e1, Expr e2) => !e1.IsNumberExpr(out NumberExpr n1) || !e2.IsNumberExpr(out NumberExpr n2);
+        public static bool IsImplicitSimbol(Expr e1, Expr e2) => !e1.ExprEndWithNumber() || !e2.ExprStartWithNumber();
 
         public override string ToString()
         {

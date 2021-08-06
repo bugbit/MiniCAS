@@ -26,7 +26,7 @@
                         <ol>
                             @foreach (var r in results)
                             {
-                                <li><Result In=@(r._in) Out=@(r._out) Details=@(r.details) Elapsed=@(r.elapsed) oneditIn="result_editIn"></Result></li>
+                                <li><Result In=@(r._in) Out=@(r._out) Details=@(r.details) Elapsed=@(r.elapsed) oneditIn="result_editInOut" oneditOut="result_editInOut"></Result></li>
                             }
                         </ol>
                     </div>
@@ -246,7 +246,7 @@
         };
     }
 
-    private async Task result_editIn(Expr e)
+    private async Task result_editInOut(Expr e)
     {
         if (e != null)
         {
