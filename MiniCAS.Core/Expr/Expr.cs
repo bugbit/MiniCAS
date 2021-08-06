@@ -61,9 +61,24 @@ namespace MiniCAS.Core.Expr
             return false;
         }
 
+        public virtual bool IsPowInteger(out BigInteger _base, out BigInteger _exp)
+        {
+            if (!IsNumberExpr(out NumberExpr n) || !n.IsZ)
+            {
+                _base = _exp = default(BigInteger);
+
+                return false;
+            }
+
+            _base = n.ValueAsInteger;
+            _exp = BigInteger.One;
+
+            return true;
+        }
+
         public virtual int GetOperatorPrecedence() => 0;
-        public virtual bool ExprStartWithNumber()=>false;
-        public virtual bool ExprEndWithNumber()=>false;
+        public virtual bool ExprStartWithNumber() => false;
+        public virtual bool ExprEndWithNumber() => false;
 
         public NumberExpr VerifIsNumberExpr()
         {

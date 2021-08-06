@@ -29,6 +29,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -48,8 +49,23 @@ namespace MiniCAS.Core.Expr
         public static AlgExpr SimplyPow(AlgExpr _base, AlgExpr _exp) => (_exp == One) ? _base : (_exp == Zero) ? One : null;
         public AlgExpr SimplyPow() => SimplyPow(Base, Exp);
 
-        public override bool ExprStartWithNumber()=>Base.ExprStartWithNumber();
+        public override bool IsPowInteger(out BigInteger _base, out BigInteger _exp)
+        {
+            if (!IsNumberExpr(out NumberExpr nbase) || !nbase.IsZ || !IsNumberExpr(out NumberExpr nexp) || !nexp.IsZ)
+            {
+                _base = _exp = default(BigInteger);
 
-        public override bool ExprEndWithNumber()=>Exp.ExprEndWithNumber();
+                return false;
+            }
+
+            _base = nbase.ValueAsInteger;
+            _exp = nexp.ValueAsInteger;
+
+            return true;
+        }
+
+        public override bool ExprStartWithNumber() => Base.ExprStartWithNumber();
+
+        public override bool ExprEndWithNumber() => Exp.ExprEndWithNumber();
     }
 }

@@ -104,8 +104,6 @@ namespace MiniCAS.Core.Expr
 
     public partial class TermExpr
     {
-        public static bool IsImplicitSimbol(Expr e1, Expr e2) => !e1.ExprEndWithNumber() || !e2.ExprStartWithNumber();
-
         public override string ToString()
         {
             if (Exprs.Length <= 0)
@@ -120,7 +118,7 @@ namespace MiniCAS.Core.Expr
             {
                 if (NeedsParentheses(e1, e))
                     str += $"({e})";
-                else if (!IsImplicitSimbol(e1, e))
+                else if (e1.ExprEndWithNumber() || e.ExprStartWithNumber())
                     str += $"*{e}";
                 else
                     str += e;
@@ -148,8 +146,8 @@ namespace MiniCAS.Core.Expr
             {
                 if (NeedsParentheses(e1, e))
                     latex.Append("(").Append(e).Append(")");
-                else if (!IsImplicitSimbol(e1, e))
-                    latex.Append("*").Append(e);
+                else if (e1.IsNumberExpr(out NumberExpr ne1) && ne1.IsZ && e.IsNumberExpr(out NumberExpr ne) && ne.IsZ)
+                    latex.Append(@"\cdot").Append(e);
                 else
                     latex.Append(e);
                 e1 = e;

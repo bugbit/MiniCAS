@@ -73,6 +73,17 @@ namespace MiniCAS.Core.Expr
             return null;
         }
 
+        public async static Task<Expr> IFLcd(Expr[] _params, CancellationToken cancel)
+        {
+            Function.VerifNumParams(_params.Length, 2);
+
+            var pTaskCalcs = from p in _params.AsParallel().WithCancellation(cancel) select IFactorsInternal(p, cancel);
+            var pCalcs = await Task.WhenAll(pTaskCalcs);
+            //var pDetails = new ArrayList(from c in pCalcs select c.expr.Details);
+
+            return null;
+        }
+
         public static async Task<LaTex> IFactorsTable((BigInteger n, BigInteger i)[] Ifactors, CancellationToken cancel)
         {
             return await Task.Run
@@ -113,7 +124,7 @@ namespace MiniCAS.Core.Expr
 
             exprs.AddIfNotEmpyOrNotEqualsEnd(e3);
 
-            var explain = new ArrayList(new object[]
+            var details = new ArrayList(new object[]
             {
                 //"Realizar divisiones entre sus divisores primos hasta que obtengamos un uno en el cociente."
                 Properties.Resources.IFactorsDetail1,
@@ -121,9 +132,9 @@ namespace MiniCAS.Core.Expr
             });
 
             if (exprs.Count > 1)
-                explain.Add(MakeSimplyExprs(exprs));
+                details.Add(MakeSimplyExprs(exprs));
 
-            return MakeResult(exprs.Last(), explain);
+            return MakeResult(exprs.Last(), details);
         }
     }
 

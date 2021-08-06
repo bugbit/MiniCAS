@@ -28,6 +28,7 @@ http://www.montereyinstitute.org/courses/Algebra1/COURSE_TEXT_RESOURCE/U11_L1_T1
     https://math.meta.stackexchange.com/questions/5020/mathjax-basic-tutorial-and-quick-reference<br>
     http://mathlex.org/doc/language<br>
     http://www.mat.uda.cl/hsalinas/cursos/2008/latex/apuntes5.pdf<br>
+    https://www.onemathematicalcat.org/MathJaxDocumentation/TeXSyntax.htm<br>
         </li>
     </ul></li>
     <li><ul>BigDecimal<br>

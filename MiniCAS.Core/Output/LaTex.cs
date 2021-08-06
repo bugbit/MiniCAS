@@ -97,5 +97,7 @@ namespace MiniCAS.Core.Output
         public LaTex AppendEquation(IEnumerable<object> objs) => AppendJoin("=", objs);
 
         public LaTex AppendOperationName(string opname, string _params) => Append(@"\operatorname").AppendBeginBrackets().Append(opname).AppendEndBrackets().Append($"({_params})");
+
+        public LaTex AppentTextColor(string color,object obj)=>Append(@"\textcolor").AppendBrackets(color).AppendBrackets(obj);
     }
 }
